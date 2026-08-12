@@ -1054,6 +1054,16 @@ wtp $a wff t_1 b~< t_2 $.
 $( Temporal Precedence, before or coincident $)
 wtpe $a wff t_1 b~<= t_2 $.
 
+$( b~< respects equality of its left argument (Leibniz congruence).  Not
+   derivable from df-bl.before alone, since that only pins down b~<'s
+   behavior when both arguments are in TIME; asserted directly, matching
+   how breq1/breq2 give this "for free" to wbr-based relations like <,
+   which b~< is not (it is its own primitive wff, not built via wbr). $)
+bl.tpeq1 $a |- ( A = B -> ( A b~< C <-> B b~< C ) ) $.
+
+$( b~< respects equality of its right argument (Leibniz congruence). $)
+bl.tpeq2 $a |- ( A = B -> ( C b~< A <-> C b~< B ) ) $.
+
 $( Temporal Precedence (before). $)
 df-bl.before $a |- ( ( t_1 e. TIME /\ t_2 e. TIME ) -> 
 		( t_1 b~< t_2 <-> t_1 < t_2 ) ) $.   
@@ -3057,10 +3067,55 @@ df-coincident $a |- coincident ( A , B ) <->
   ( ( birth ( A ) = birth ( B ) ) /\ ( death ( A ) = death ( B ) ) ) $.
 
 $( Define Allen's interval nonoverlaps. $)
-df-nonoverlaps $a |- nonoverlaps ( A , B ) <-> 
+df-nonoverlaps $a |- nonoverlaps ( A , B ) <->
   ( ( death ( A ) b~< birth ( B ) ) \/ ( death ( B ) b~< birth ( A ) ) ) $.
 
-$( 
+$( next is constant $)
+$c next $.
+$( next(t_1,t_2) is wff $)
+wnext $a wff next ( t_1 , t_2 ) $.
+
+$( Define next: t_2 immediately follows t_1, no instant strictly between
+   (df-bl.next in Supplemental-Semantics).  The witness for "no instant
+   between" is a genuine setvar x, bridged to class position via cv;
+   see bl.nexttp for why this matters (contrast df-exc/df-flmc above,
+   which quantify over class-typed s_1/s_2/p_0 and so cannot actually be
+   unfolded through wex in a real proof). $)
+df-next $a |- ( next ( t_1 , t_2 ) <->
+  ( t_1 b~< t_2 /\ -. E. x ( t_1 b~< x /\ x b~< t_2 ) ) ) $.
+
+$( next(t_1,t_2) implies t_1 precedes t_2.  (Proved) $)
+bl.nexttp $p |- ( next ( t_1 , t_2 ) -> t_1 b~< t_2 ) $=
+  vt1 vt2 wnext vt1 vt2 wtp vt1 vx cv wtp vx cv vt2 wtp wa vx wex wn vx vt1 vt2
+  df-next simplbi $.
+
+$( t_2 is a set given the (t_1 b~<t_2 /\ t_2 b~<t_3) witness data; helper for
+   bl.nextwit. $)
+bl.nextev $p |- ( ( t_2 e. TIME /\ ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ->
+  t_2 e. _V ) $=
+  vt2 ctime wcel vt1 vt2 wtp vt2 vt3 wtp wa wa vt2 ctime wcel vt2 cvv wcel vt2
+  ctime wcel vt1 vt2 wtp vt2 vt3 wtp wa simpl vt2 ctime elex syl $.
+
+$( Existential witnessing for the "no instant between" clause of df-next: if
+   t_2 sits strictly between t_1 and t_3 (via b~<), then some x does.  This is
+   the lemma that needed bl.tpeq1/bl.tpeq2 above -- b~< is not wbr-based, so
+   the standard sbcbr1g/sbcbr2g machinery does not apply to it; sbcieg
+   (driven by the congruence axioms) is used instead. $)
+$d x t_1 t_2 t_3 $.
+bl.nextwit $p |- ( ( t_2 e. TIME /\ ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ->
+  E. x ( t_1 b~< x /\ x b~< t_3 ) ) $=
+  vt2 ctime wcel vt1 vt2 wtp vt2 vt3 wtp wa wa vt1 vx cv wtp vx cv vt3 wtp wa
+  vx vt2 wsbc vt1 vx cv wtp vx cv vt3 wtp wa vx wex vt2 ctime wcel vt1 vt2 wtp
+  vt2 vt3 wtp wa wa vt1 vx cv wtp vx cv vt3 wtp wa vx vt2 wsbc vt1 vt2 wtp vt2
+  vt3 wtp wa vt2 ctime wcel vt1 vt2 wtp vt2 vt3 wtp wa simpr vt2 ctime wcel vt1
+  vt2 wtp vt2 vt3 wtp wa wa vt2 cvv wcel vt1 vx cv wtp vx cv vt3 wtp wa vx vt2
+  wsbc vt1 vt2 wtp vt2 vt3 wtp wa wb vt1 vt2 vt3 bl.nextev vt1 vx cv wtp vx cv
+  vt3 wtp wa vt1 vt2 wtp vt2 vt3 wtp wa vx vt2 cvv vx cv vt2 wceq vt1 vx cv wtp
+  vt1 vt2 wtp vx cv vt3 wtp vt2 vt3 wtp vx cv vt2 vt1 bl.tpeq2 vx cv vt2 vt3
+  bl.tpeq1 anbi12d sbcieg syl mpbird vt1 vx cv wtp vx cv vt3 wtp wa vx vt2
+  spesbc syl $.
+
+$(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   KerML Element Representation
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
