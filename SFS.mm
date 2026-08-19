@@ -1236,13 +1236,25 @@ Logic Operators in interpretation ` boldI `
 -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 $)
 
-  $( Interpretation of implication.  $)
-df-bl.im $a |- ( boldI [[ ( ph -> ps ) ]] 
-      <-> ( boldI [[ ph ]] -> boldI [[ ps ]] ) ) $.
-  
-  $( Interpretation of biconditional.  $)
-df-bl.bi $a |- ( boldI [[ ( ph <-> ps ) ]] 
-      <-> ( boldI [[ ph ]] <-> boldI [[ ps ]] ) ) $.
+  $( Interpretation of implication.  Only the sound (modal K-axiom) direction is
+     axiomatized: the converse is false in general (Lean/Mathlib formalization,
+     Lean4SFS/SFS.lean's dl_im_sound, found a counterexample). $)
+df-bl.im $a |- ( boldI [[ ( ph -> ps ) ]]
+      -> ( boldI [[ ph ]] -> boldI [[ ps ]] ) ) $.
+
+  $( Monotonicity of ` boldI `: any provable implication lifts through the
+     interpretation.  This is the general tool for weakening a plain-logic fact
+     ` ( ph -> ps ) ` into a ` boldI `-level implication, used repeatedly below
+     wherever a formerly-axiomatized converse direction (df-bl.or, df-bl.not,
+     bl.3or, bl.ex, ...) was removed as unsound. $)
+bl.mono $p |- ( ( ph -> ps ) -> ( boldI [[ ph ]] -> boldI [[ ps ]] ) )
+  $= wph wps wi wph wps wi wboldi wph wboldi wps wboldi wi wph wps wi
+  ax-bl.taut wph wps df-bl.im syl $.
+
+  $( Interpretation of biconditional.  Only the sound direction is axiomatized:
+     the converse is false in general (Lean4SFS/SFS.lean's dl_bi_sound). $)
+df-bl.bi $a |- ( boldI [[ ( ph <-> ps ) ]]
+      -> ( boldI [[ ph ]] <-> boldI [[ ps ]] ) ) $.
 
   $( Interpretation of conjunction.  $)
 df-bl.an $a |- ( boldI [[ ( ph /\ ps ) ]] 
@@ -1251,23 +1263,37 @@ df-bl.an $a |- ( boldI [[ ( ph /\ ps ) ]]
   $( Interpretation of conjunction, three wff.  $)
 bl.3an $p |- ( boldI [[ ( ph /\ ps /\ ch ) ]] 
       <-> ( boldI [[ ph ]] /\ boldI [[ ps ]] /\ boldI [[ ch ]] ) ) 
-  $= ( w3a wboldi wa wb ax-bl.taut ax-mp df-bl.bi mpbi df-bl.an
+  $= ( w3a wboldi wa wb ax-bl.taut ax-mp df-bl.bi ax-mp df-bl.an
   bitri df-3an anbi1i bitr4i ) ABCDZEZAEZBEZFZCEZFZSTUBDRABFZEZUBFZUC
   RUDCFZEZUFQUGGZEZRUHGUIUJABCNUIHIQUGJKUDCLMUEUAUBABLOMSTUBNP $.
   
-  $( Interpretation of disjunction.  $)
-df-bl.or $a |- ( boldI [[ ( ph \/ ps ) ]] 
-      <-> ( boldI [[ ph ]] \/ boldI [[ ps ]] ) ) $.
+  $( Interpretation of disjunction.  Only the sound direction is axiomatized: the
+     converse (boldI[[ph\/ps]] -> boldI[[ph]]\/boldI[[ps]]) is false in general
+     (Lean4SFS/SFS.lean's dl_or_sound). $)
+df-bl.or $a |- ( ( boldI [[ ph ]] \/ boldI [[ ps ]] )
+      -> boldI [[ ( ph \/ ps ) ]] ) $.
   
-  $( Interpretation of disjunction, three wff.  $)
-bl.3or $p |- ( boldI [[ ( ph \/ ps \/ ch ) ]] 
-      <-> ( boldI [[ ph ]] \/ boldI [[ ps ]] \/ boldI [[ ch ]] ) ) 
-  $= ( w3o wboldi wo wb ax-bl.taut ax-mp df-bl.bi mpbi df-bl.or
-  bitri df-3or orbi1i bitr4i ) ABCDZEZAEZBEZFZCEZFZSTUBDRABFZEZUBFZUC
-  RUDCFZEZUFQUGGZEZRUHGUIUJABCNUIHIQUGJKUDCLMUEUAUBABLOMSTUBNP $.
+  $( Interpretation of disjunction, three wff.  Only the sound direction is
+     axiomatized: the converse is false in general, same as df-bl.or itself
+     (Lean4SFS/SFS.lean's dl_3or_sound). $)
+bl.3or $p |- ( ( boldI [[ ph ]] \/ boldI [[ ps ]] \/ boldI [[ ch ]] )
+      -> boldI [[ ( ph \/ ps \/ ch ) ]] )
+  $= wph wboldi wps wboldi wch wboldi w3o wph wps wo wch wo wboldi wph wps
+  wch w3o wboldi wph wboldi wps wboldi wch wboldi w3o wph wps wo wboldi wch
+  wboldi wo wph wps wo wch wo wboldi wph wboldi wps wboldi wch wboldi w3o
+  wph wboldi wps wboldi wo wch wboldi wo wph wps wo wboldi wch wboldi wo
+  wph wboldi wps wboldi wch wboldi w3o wph wboldi wps wboldi wo wch wboldi
+  wo wph wboldi wps wboldi wch wboldi df-3or biimpi wph wboldi wps wboldi
+  wo wph wps wo wboldi wch wboldi wph wps df-bl.or orim1i syl wph wps wo
+  wch df-bl.or syl wph wps wo wch wo wph wps wch w3o wi wph wps wo wch wo
+  wboldi wph wps wch w3o wboldi wi wph wps wch w3o wph wps wo wch wo wph
+  wps wch df-3or biimpri wph wps wo wch wo wph wps wch w3o bl.mono ax-mp
+  syl $.
     
-  $( Interpretation of complement.  $)
-df-bl.not $a |- ( boldI [[ -. ph  ]] <-> -. boldI [[ ph ]] ) $.
+  $( Interpretation of complement.  Only the sound direction is axiomatized: the
+     converse (-. boldI[[ph]] -> boldI[[-.ph]]) is false in general (Lean4SFS/
+     SFS.lean's dl_not_sound). $)
+df-bl.not $a |- ( boldI [[ -. ph  ]] -> -. boldI [[ ph ]] ) $.
   
 $(  ***** Quantification in interpretation ` boldI ` ***** $)
 
@@ -1275,16 +1301,70 @@ $(  ***** Quantification in interpretation ` boldI ` ***** $)
 df-bl.al $a |- ( boldI [[ A. x e. A ph ]] <-> A. x e. A boldI [[ ph ]] ) $.
 
 
+  $( boldI respects logical equivalence -- the iff-congruence counterpart of
+     bl.mono, same derivation pattern (ax-bl.taut necessitation + df-bl.bi's
+     sound direction). $)
+bl.monobi $p |- ( ( ph <-> ps ) -> ( boldI [[ ph ]] <-> boldI [[ ps ]] ) )
+  $= wph wps wb wph wps wb wboldi wph wboldi wps wboldi wb wph wps wb
+  ax-bl.taut wph wps df-bl.bi syl $.
+
+  $( Unrestricted version of df-bl.al, via ralv (A. x e. _V ph <-> A. x ph). $)
+bl.al $p |- ( boldI [[ A. x ph ]] <-> A. x boldI [[ ph ]] )
+  $= wph vx wal wboldi wph vx cvv wral wboldi wph wboldi vx wal wph vx wal
+  wph vx cvv wral wb wph vx wal wboldi wph vx cvv wral wboldi wb wph vx cvv
+  wral wph vx wal wph vx ralv bicomi wph vx wal wph vx cvv wral bl.monobi
+  ax-mp wph vx cvv wral wboldi wph wboldi vx cvv wral wph wboldi vx wal wph
+  vx cvv df-bl.al wph wboldi vx ralv bitri bitri $.
+
+  ${
+  $( boldI[[ph]] is vacuously quantifiable whenever ph is: needed so bl.ex's
+     witness-elimination step (rexlimi) has the F/ hypothesis it needs on the
+     boldI-wrapped side, not just the raw side (nfre1). $)
+  bl.nf.1 $e |- F/ x ph $.
+  bl.nf $p |- F/ x boldI [[ ph ]]
+    $= wph wboldi wph wboldi vx wal wi vx wal wph wboldi vx wnf wph wboldi
+    wph wboldi vx wal wi vx wph wboldi vx wal wph wboldi wph wboldi vx wal
+    wph vx wal wboldi wph wboldi wph vx bl.al wph vx wal wph wb wph vx wal
+    wboldi wph wboldi wb wph vx bl.nf.1 19.3 wph vx wal wph bl.monobi ax-mp
+    bitr3i biimpri ax-gen wph wboldi vx nf5-1 ax-mp $.
+  $}
+
 $( Define existential quantification in interpretation ` boldI `. $)
 bl.dfrex2 $p |- ( boldI [[ E. x e. A ph ]] <-> boldI [[ -. A. x e. A -. ph ]] )
-  $= ( wrex wn wral wb wboldi dfrex2 ax-bl.taut ax-mp df-bl.bi mpbi
+  $= ( wrex wn wral wb wboldi dfrex2 ax-bl.taut ax-mp df-bl.bi ax-mp
   ) ABCDZAEBCFEZGZHZNHOHGPQABCIPJKNOLM $.
 
-  $( Exportation of existential quantification from interpretation ` boldI `. $)
-bl.ex $p |- ( boldI [[ E. x e. A ph ]] <-> E. x e. A boldI [[ ph ]] ) 
-  $= ( wrex wboldi wn wral bl.dfrex2 df-bl.not df-bl.al notbii
-  ralbii bitri dfrex2 bitr4i ) ABCDEZAEZFZBCGZFZQBCDPAFZEZBCGZFZTPUAB
-  CGZEZFZUDPUEFEUGABCHUEIMUFUCUABCJKMUCSUBRBCAILKMQBCNO $.
+  $( Raw (non-modal) restricted-existential-introduction fact, unconditional:
+     the ordinary logic behind bl.ex, before any boldI is involved. $)
+bl.exraw $p |- ( ( x e. A /\ ph ) -> E. x e. A ph )
+  $= vx cv cA wcel wph wa vx cv cA wcel wph wa vx wex wph vx cA wrex vx cv
+  cA wcel wph wa vx 19.8a wph vx cA wrex vx cv cA wcel wph wa vx wex wph vx
+  cA df-rex biimpri syl $.
+
+  $( Helper for bl.ex.  Built from bl.exraw, bl.mono, bl.ty (types are constant
+     under interpretation -- one of this file's own pre-existing unproven $p
+     placeholders, so this lemma inherits that gap rather than introducing a
+     new one), and df-bl.an (sound both ways). $)
+bl.exlem0 $p |- ( ( x e. A /\ boldI [[ ph ]] ) -> boldI [[ E. x e. A ph ]] )
+  $= vx cv cA wcel wph wboldi wa vx cv cA wcel wph wa wboldi wph vx cA wrex
+  wboldi vx cv cA wcel wph wboldi wa vx cv cA wcel wboldi wph wboldi wa vx
+  cv cA wcel wph wa wboldi vx cv cA wcel vx cv cA wcel wboldi wph wboldi vx
+  cv cA bl.ty anim1i vx cv cA wcel wph wa wboldi vx cv cA wcel wboldi wph
+  wboldi wa vx cv cA wcel wph df-bl.an biimpri syl vx cv cA wcel wph wa wph
+  vx cA wrex wi vx cv cA wcel wph wa wboldi wph vx cA wrex wboldi wi wph vx
+  cA bl.exraw vx cv cA wcel wph wa wph vx cA wrex bl.mono ax-mp syl $.
+
+  $( Exported form of bl.exlem0. $)
+bl.exlem $p |- ( x e. A -> ( boldI [[ ph ]] -> boldI [[ E. x e. A ph ]] ) )
+  $= vx cv cA wcel wph wboldi wph vx cA wrex wboldi wph vx cA bl.exlem0 ex $.
+
+  $( Exportation of existential quantification from interpretation ` boldI `.
+     Only the sound direction is axiomatized: the converse (the classic
+     invalid dE.-to-E.d swap -- different instants may need different
+     witnesses) is false in general (Lean4SFS/SFS.lean's dl_ex_sound). $)
+bl.ex $p |- ( E. x e. A boldI [[ ph ]] -> boldI [[ E. x e. A ph ]] )
+  $= wph wboldi wph vx cA wrex wboldi vx cA wph vx cA wrex vx wph vx cA
+  nfre1 bl.nf wph vx cA bl.exlem rexlimi $.
 
 
 $(
@@ -1376,6 +1456,20 @@ ax-bl.bi $a |- ( ( t_1 e. TIME /\ t_2 e. TIME /\ t_1 = t_2 ) ->
 $( Axiom of temporal equality. $)
 ax-bl.eq $a |- ( ( t_1 e. TIME /\ t_2 e. TIME /\ t_1 = t_2 ) ->
     ( A = B <-> boldI [[ A , t_1 ]] = boldI [[ B , t_2 ]] ) )  $.
+
+  ${
+  bl.monobit.1 $e |- t_0 e. TIME $.
+  $( Same-instant specialization of ax-bl.bi: boldI[[.,t_0]] respects logical
+     equivalence, at a single fixed t_0 (no second instant to unify away).
+     Reused wherever a bl.ator3*-style proof needs to bridge a w3o-shaped
+     3-way disjunction and its df-3or-equivalent nested 2-way form under the
+     timed bracket. $)
+  bl.monobit $p |- ( ( ph <-> ps ) -> ( boldI [[ ph , t_0 ]] <-> boldI [[ ps , t_0 ]] ) )
+    $= wph wps wb wph vt0 wboldit wps vt0 wboldit wb vt0 ctime wcel vt0 ctime
+    wcel vt0 vt0 wceq w3a wph wps wb wph vt0 wboldit wps vt0 wboldit wb wb
+    vt0 ctime wcel vt0 ctime wcel vt0 vt0 wceq bl.monobit.1 bl.monobit.1 vt0
+    eqid 3pm3.2i wph wps vt0 vt0 ax-bl.bi ax-mp biimpi $.
+  $}
 
 $(
 -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
@@ -1752,42 +1846,76 @@ bl.ator2i $p |- ( boldI [[ ( ( ph \/ ps ) @ t_0 ) ]]
 
   ${
   bl.ator3i.1 $e |- t_0 e. TIME $.
-$( Distribute @ over disjunction, three terms, inference. $)
+$( Distribute @ over disjunction, three terms, inference.  Restated to keep
+   the disjuncts separately boldI[[.]]-wrapped rather than re-wrapping the
+   whole disjunction (as the original did, via the now-weakened bl.3or): that
+   re-wrap needed bl.3or's full (now-unsound-in-general) biconditional, and
+   this form is exactly what the proof already establishes from only the
+   sound @/timed-bracket machinery (df-bl.at/df-bl.ort/df-3or), so nothing is
+   lost -- see Lean4SFS/SFS.lean's dl_3or_sound finding. $)
 bl.ator3i $p |- ( boldI [[ ( ( ph \/ ps \/ ch ) @ t_0 ) ]]
-      <-> boldI [[ ( ( ph @ t_0 ) \/ ( ps @ t_0 ) \/ ( ch @ t_0 ) ) ]] )
-  $= ( w3o wat wboldi wboldit wo df-bl.at wb df-3or ctime wcel
-  w3a wceq bitri df-bl.ort bitr4i eqid 3pm3.2i ax-bl.bi ax-mp mpbi
-  orbi1i 3orbi123i bl.3or ) ABCFZDGHZADGZHZBDGZHZCDGZHZFZUKUMUOFHUJAD
-  IZBDIZCDIZFZUQUJURUSJZUTJZVAUJABJZDIZUTJZVCUJVDCJZDIZVFUJUIDIZVHUID
-  EKUIVGLZVIVHLZABCMDNOZVLDDQZPVJVKLVLVLVMEEDUAUBUIVGDDUCUDUERVDCDESR
-  VEVBUTABDESUFRURUSUTMTULURUNUSUPUTADEKBDEKCDEKUGTUKUMUOUHT $.
+      <-> ( boldI [[ ( ph @ t_0 ) ]] \/ boldI [[ ( ps @ t_0 ) ]] \/ boldI [[ ( ch @ t_0 ) ]] ) )
+  $= wph wps wch w3o vt0 wat wboldi wph vt0 wboldit wps vt0 wboldit wch vt0
+  wboldit w3o wph vt0 wat wboldi wps vt0 wat wboldi wch vt0 wat wboldi w3o
+  wph wps wch w3o vt0 wat wboldi wph vt0 wboldit wps vt0 wboldit wo wch vt0
+  wboldit wo wph vt0 wboldit wps vt0 wboldit wch vt0 wboldit w3o wph wps wch
+  w3o vt0 wat wboldi wph wps wch w3o vt0 wboldit wph vt0 wboldit wps vt0
+  wboldit wo wch vt0 wboldit wo wph wps wch w3o vt0 bl.ator3i.1 df-bl.at wph
+  wps wch w3o vt0 wboldit wph wps wo wch wo vt0 wboldit wph vt0 wboldit wps
+  vt0 wboldit wo wch vt0 wboldit wo wph wps wch w3o wph wps wo wch wo wb
+  wph wps wch w3o vt0 wboldit wph wps wo wch wo vt0 wboldit wb wph wps wch
+  df-3or wph wps wch w3o wph wps wo wch wo vt0 bl.ator3i.1 bl.monobit ax-mp
+  wph wps wo wch wo vt0 wboldit wph wps wo vt0 wboldit wch vt0 wboldit wo
+  wph vt0 wboldit wps vt0 wboldit wo wch vt0 wboldit wo wph wps wo wch vt0
+  bl.ator3i.1 df-bl.ort wph wps wo vt0 wboldit wph vt0 wboldit wps vt0
+  wboldit wo wch vt0 wboldit wph wps vt0 bl.ator3i.1 df-bl.ort orbi1i bitri
+  bitri bitri wph vt0 wboldit wps vt0 wboldit wch vt0 wboldit df-3or bitr4i
+  wph vt0 wat wboldi wph vt0 wboldit wps vt0 wat wboldi wps vt0 wboldit wch
+  vt0 wat wboldi wch vt0 wboldit wph vt0 bl.ator3i.1 df-bl.at wps vt0
+  bl.ator3i.1 df-bl.at wch vt0 bl.ator3i.1 df-bl.at 3orbi123i bitr4i $.
   $}
 
   ${
   bl.ator3ri.1 $e |- t_0 e. TIME $.
-$( Distribute @ over disjunction, three terms (right), inference. $)
+$( Distribute @ over disjunction, three terms (right), inference.  Restated
+   for the same reason as bl.ator3i above. $)
 bl.ator3ri $p |- ( boldI [[ ( ( ph \/ ( ps \/ ch ) ) @ t_0 ) ]]
-      <-> boldI [[ ( ( ph @ t_0 ) \/ ( ( ps @ t_0 ) \/ ( ch @ t_0 ) ) ) ]] )
-  $= ( wat wo wboldi w3o df-bl.or wboldit wceq wb wa eqid
-  df-bl.at bitri df-bl.ort orbi12i bitr4i df-3or orass pm3.2i
-  df-bl.atbi ax-mp 3bitri bicomi orbi2i 3bitr2ri ) ADFZBDFZCDFZGZGHUJ
-  HZUMHZGZABCIZDFHZABCGZGZDFHZUJUMJURUNUKHZULHZGZGZUPURADKZUSDKZGZVEU
-  RVAUTDKVHDDLZUQUTMZNURVAMVIVJDOUQABGCGUTABCUAABCUBQUCUQUTDDEEUDUEZU
-  TDEPAUSDERUFVFUNVGVDUNVFADEPUGVGBDKZCDKZGVDBCDERVBVLVCVMBDEPCDEPSTS
-  QUOVDUNUKULJUHTVKUI $.
+      <-> ( boldI [[ ( ph @ t_0 ) ]] \/ ( boldI [[ ( ps @ t_0 ) ]] \/ boldI [[ ( ch @ t_0 ) ]] ) ) )
+  $= wph wps wch wo wo vt0 wat wboldi wph wps wch wo wo vt0 wboldit wph vt0
+  wat wboldi wps vt0 wat wboldi wch vt0 wat wboldi wo wo wph wps wch wo wo
+  vt0 bl.ator3ri.1 df-bl.at wph wps wch wo wo vt0 wboldit wph vt0 wboldit
+  wps wch wo vt0 wboldit wo wph vt0 wat wboldi wps vt0 wat wboldi wch vt0
+  wat wboldi wo wo wph wps wch wo vt0 bl.ator3ri.1 df-bl.ort wph vt0 wboldit
+  wph vt0 wat wboldi wps wch wo vt0 wboldit wps vt0 wat wboldi wch vt0 wat
+  wboldi wo wph vt0 wat wboldi wph vt0 wboldit wph vt0 bl.ator3ri.1 df-bl.at
+  bicomi wps wch wo vt0 wboldit wps vt0 wboldit wch vt0 wboldit wo wps vt0
+  wat wboldi wch vt0 wat wboldi wo wps wch vt0 bl.ator3ri.1 df-bl.ort wps
+  vt0 wboldit wps vt0 wat wboldi wch vt0 wboldit wch vt0 wat wboldi wps vt0
+  wat wboldi wps vt0 wboldit wps vt0 bl.ator3ri.1 df-bl.at bicomi wch vt0
+  wboldit wch vt0 wat wboldi wch vt0 wat wboldi wch vt0 wat wboldi wch vt0
+  wboldit wch vt0 bl.ator3ri.1 df-bl.at bicomi wch vt0 wat wboldi biid bitri
+  orbi12i bitri orbi12i bitri bitri $.
   $}
 
   ${
   bl.ator3li.1 $e |- t_0 e. TIME $.
-$( Distribute @ over disjunction, three terms (left), inference. $)
+$( Distribute @ over disjunction, three terms (left), inference.  Restated
+   for the same reason as bl.ator3i above. $)
 bl.ator3li $p |- ( boldI [[ ( ( ( ph \/ ps ) \/ ch ) @ t_0 ) ]]
-      <-> boldI [[ ( ( ( ph @ t_0 ) \/ ( ps @ t_0 ) ) \/ ( ch @ t_0 ) ) ]] )
-  $= ( wat wo wboldi w3o df-bl.or wboldit wceq wb wa eqid
-  df-bl.at df-3or df-bl.ort orbi12i bitr4i pm3.2i ax-mp 3bitri bicomi
-  3bitr2ri df-bl.atbi bitri orbi1i ) ADFZBDFZGZCDFZGHUKHZULHZGZABCIZD
-  FHZABGZCGZDFHZUKULJUQUIHZUJHZGZUNGZUOUQURDKZCDKZGZVDUQUTUSDKVGDDLZU
-  PUSMZNUQUTMVHVIDOABCQUAUPUSDDEEUFUBZUSDEPURCDERUCVEVCVFUNVEADKZBDKZ
-  GVCABDERVAVKVBVLADEPBDEPSTUNVFCDEPUDSUGUMVCUNUIUJJUHTVJUE $.
+      <-> ( ( boldI [[ ( ph @ t_0 ) ]] \/ boldI [[ ( ps @ t_0 ) ]] ) \/ boldI [[ ( ch @ t_0 ) ]] ) )
+  $= wph wps wo wch wo vt0 wat wboldi wph wps wo wch wo vt0 wboldit wph vt0 wat
+  wboldi wps vt0 wat wboldi wo wch vt0 wat wboldi wo wph wps wo wch wo vt0
+  bl.ator3li.1 df-bl.at wph wps wo wch wo vt0 wboldit wph wps wo vt0 wboldit
+  wch vt0 wboldit wo wph vt0 wat wboldi wps vt0 wat wboldi wo wch vt0 wat
+  wboldi wo wph wps wo wch vt0 bl.ator3li.1 df-bl.ort wph wps wo vt0 wboldit
+  wph vt0 wat wboldi wps vt0 wat wboldi wo wch vt0 wboldit wch vt0 wat wboldi
+  wph wps wo vt0 wboldit wph vt0 wboldit wps vt0 wboldit wo wph vt0 wat wboldi
+  wps vt0 wat wboldi wo wph wps vt0 bl.ator3li.1 df-bl.ort wph vt0 wboldit wph
+  vt0 wat wboldi wps vt0 wboldit wps vt0 wat wboldi wph vt0 wat wboldi wph vt0
+  wboldit wph vt0 bl.ator3li.1 df-bl.at bicomi wps vt0 wat wboldi wps vt0
+  wboldit wps vt0 bl.ator3li.1 df-bl.at bicomi orbi12i bitri wch vt0 wat
+  wboldi wch vt0 wboldit wch vt0 bl.ator3li.1 df-bl.at bicomi orbi12i bitri
+  bitri $.
   $}
 
 $( Distribute @ over biconditional. $)
