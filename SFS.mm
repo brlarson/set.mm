@@ -3272,6 +3272,35 @@ $( Define element kind. $)
 df-kind $a |- kind = { Element , Relationship , Dependency , Feature , Classifier ,
   DataType , Class , Structure , Association , Connector , Behavior , Function ,
   Expression , Interaction } $.
-  
-  
+
+$( Unique Identifier creation from a Class Identifier by appending a wonce $)
+
+$( Class of Class Identifiers: strings that are either a simple identifier, or a
+   qualified name -- a sequence of identifiers separated by "::". $)
+$c CI $.
+cci $a class CI $.
+
+$( Class of Unique Identifiers: the class of all allocated unique identifiers. $)
+$c UI $.
+cuid $a class UI $.
+
+$( The tag-boundary separator string ("\#") inserted between a class identifier and a
+   wonce when forming a unique identifier. $)
+$c tb $.
+ctagb $a class tb $.
+
+$( Class of "wonces" (word-once identifiers): the countably-infinite sequence
+   a, b, ..., z, aa, ab, ..., az, ba, ... used to make unique identifiers distinct. $)
+$c wonce $.
+cwonce $a class wonce $.
+
+$( mkUid, as a class-valued function from Class Identifiers to Unique Identifiers. $)
+$c mkUid $.
+cmkuid $a class mkUid $.
+
+$( Define creation of a Unique Identifier ` ( mkUid ` A ) ` from a Class Identifier
+   ` A ` by appending the tag-boundary and a wonce. $)
+df-wonce $a |- ( mkUid ` A ) = ( ( A ++ tb ) ++ wonce ) $.
+
+
 $( ******************* End of Supplemental Formal Semantics ******************* $)
