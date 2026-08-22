@@ -2917,7 +2917,7 @@ $( Define improper part $)
 df-pim $a |- p_x ImproperPart p_y <-> ( p_x PartOf p_y \/ p_x = p_y ) $.
 
 $( Define part disjointness $)
-df-pdj $a |- p_x Disjoint p_y <-> -. p_y Overlap p_y $.
+df-pdj $a |- p_x Disjoint p_y <-> -. p_x Overlap p_y $.
 
 $( Define part containment hierarchy. $)
 df-pch $a |- ( ( ( p_x PartOf p_y \/ p_y PartOf p_x ) \/
@@ -3242,6 +3242,31 @@ bl.nextwit $p |- ( ( t_2 e. TIME /\ ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ->
   vt1 vt2 wtp vx cv vt3 wtp vt2 vt3 wtp vx cv vt2 vt1 bl.tpeq2 vx cv vt2 vt3
   bl.tpeq1 anbi12d sbcieg syl mpbird vt1 vx cv wtp vx cv vt3 wtp wa vx vt2
   spesbc syl $.
+
+$( openLeft is constant $)
+$c openLeft $.
+$( openLeft(A) is wff $)
+wopenleft $a wff openLeft ( A ) $.
+
+$( openRight is constant $)
+$c openRight $.
+$( openRight(A) is wff $)
+wopenright $a wff openRight ( A ) $.
+
+$( nearlymeets is constant $)
+$c nearlymeets $.
+$( nearlymeets(A,B) is wff $)
+wnearlymeets $a wff nearlymeets ( A , B ) $.
+
+$( Define the Allen's-interval-adjacent relation nearlymeets (Allen.kerml's own
+   nearlyMeets, df-nearlymeets in Supplemental-Semantics): A and B don't meet,
+   but there is no instant strictly between death(A) and birth(B) -- either
+   because they share that boundary instant and A is open-right or B is
+   open-left there, or because there simply is no instant between under
+   next(), even without either boundary being open. $)
+df-nearlymeets $a |- ( nearlymeets ( A , B ) <->
+  ( ( ( birth ( B ) = death ( A ) ) /\ ( openRight ( A ) \/ openLeft ( B ) ) )
+    \/ next ( death ( A ) , birth ( B ) ) ) ) $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
