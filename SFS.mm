@@ -3327,5 +3327,54 @@ $( Define creation of a Unique Identifier ` ( mkUid ` A ) ` from a Class Identif
    ` A ` by appending the tag-boundary and a wonce. $)
 df-wonce $a |- ( mkUid ` A ) = ( ( A ++ tb ) ++ wonce ) $.
 
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  KerML Type Definition
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( Class of identifiers: strings naming KerML elements. Already declared, unused
+   until now, at the top of this file. $)
+cID $a class ID $.
+
+$( The kind-marker for a bare ` type x ` declaration: an element whose kind is
+   neither a Classifier nor a Feature (KerML 8.4.3.2). Deliberately NOT one of
+   df-kind's 14 enumerated tags: the book treats V_C u. V_F as a proper subset
+   of V_T, so Type marks a design element outside that enumeration, not a
+   15th member of it. Token already declared, unused until now, at the top of
+   this file. $)
+cType $a class Type $.
+
+$( The design: the set of all elements in the database or workspace (KerML
+   Core Semantics 2.1.2). Represented as a set of df-rep triples
+   ` <. k , id , C >. ` -- left a fresh primitive class, its internal
+   structure not otherwise constrained here. $)
+$c Design $.
+cDesign $a class Design $.
+
+$( Semantics of KerML text ` type A `: A is an identifier (a String), and
+   ` <. Type , A , C >. e. Design ` is the formal reading of that concrete
+   declaration itself -- some design element's df-rep triple has kind Type
+   and id A -- rather than an unstructured stand-in predicate. Given that
+   premise, C (the type's extent, i.e. what A denotes) is a genuine set. $)
+${
+  df-type.1 $e |- A e. ID $.
+  df-type.2 $e |- <. Type , A , C >. e. Design $.
+  df-type $a |- C e. _V $.
+$}
+
+$( V_T: the set of all Types in the design (KerML Core Semantics 2.1.1's vocabulary
+   triple V = <. V_T , V_C , V_F >.), a pre-existing primitive df-types constrains
+   rather than fully defines (matching the book's own implication, not equation,
+   form). $)
+$c VT $.
+cVT $a class VT $.
+
+$( Semantics of KerML text ` type x `, restated as membership in V_T: for every
+   identifier x, if x is declared with the bare type keyword (the same
+   Design-triple-membership reading df-type gives that text), then x e. V_T. Uses
+   the same genuine text-to-Design-triple association as df-type, not a separate
+   stand-in predicate. $)
+df-types $a |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $.
 
 $( ******************* End of Supplemental Formal Semantics ******************* $)
