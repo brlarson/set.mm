@@ -3497,4 +3497,31 @@ df-GetChangeToFalse $a |- ( GetChangeToFalse ( occ , boo , inst , flag ) <->
       A. tv e. ( inst [,) now ) FeatAccP ( occ , boo , tv ) )
     -> flag = FalseItem ) ) $.
 
+$( changed is constant $)
+$c changed $.
+$( changed(occ,t_1) is class: the time when occ's interpretation most recently
+   changed before t_1 (Chapter/KernelSemanticsChapter.tex sec 3.1.5). $)
+cchanged $a class changed ( occ , t_1 ) $.
+
+$( Define changed: changed(occ,t_1) = t_2 iff t_2 precedes t_1, occ's
+   interpretation at t_1 differs from its interpretation at t_2 (or t_2 is 0,
+   meaning occ has not changed before t_1), and occ's interpretation is stable
+   at that t_2 value throughout the open interval (t_2,t_1). $)
+df-bl.changed $a |- ( changed ( occ , t_1 ) = t_2 <->
+  ( t_2 b~< t_1 /\
+    ( -. boldI [[ occ , t_1 ]] = boldI [[ occ , t_2 ]] \/ t_2 = 0 ) /\
+    A. tv e. ( t_2 (,) t_1 ) boldI [[ occ , tv ]] = boldI [[ occ , t_2 ]] ) ) $.
+
+$( timeof is constant $)
+$c timeof $.
+$( timeof(ph) is class: the first instant at which predicate ph holds
+   (Chapter/KernelSemanticsChapter.tex sec 3.1.6). $)
+ctimeof $a class timeof ( ph ) $.
+
+$( Define timeof: timeof(ph) = t_1 iff ph holds at t_1 and ph does not hold at
+   any instant strictly before t_1. $)
+df-bl.timeof $a |- ( timeof ( ph ) = t_1 <->
+  ( boldI [[ ph , t_1 ]] /\
+    A. tv e. ( 0 [,) t_1 ) -. boldI [[ ph , tv ]] ) ) $.
+
 $( ******************* End of Supplemental Formal Semantics ******************* $)
