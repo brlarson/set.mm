@@ -3377,4 +3377,124 @@ $( Semantics of KerML text ` type x `, restated as membership in V_T: for every
    stand-in predicate. $)
 df-types $a |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $.
 
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  Variable Feature Access
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( occ, feat, inst, valu, boo, flag are new class variables for the KerML
+   Domain library's variable-feature-accessing functions/behaviors below
+   (Chapter/KernelSemanticsChapter.tex sec 3.1.4), mirroring Domain.kerml's own
+   d/f/tau/v/e/b parameter names. $)
+$v occ feat inst valu boo flag $.
+vocc  $f class occ $.
+vfeat $f class feat $.
+vinst $f class inst $.
+vvalu $f class valu $.
+vboo  $f class boo $.
+vflag $f class flag $.
+
+$( tv is a new setvar variable, the bound variable for the restricted
+   quantifications below -- must be setvar, not class, matching how
+   bl.nextwit above needed a genuine setvar witness x rather than reusing
+   the class-typed t_1/t_2/t_3. $)
+$v tv $.
+vtv $f setvar tv $.
+
+$( FeatAcc is constant $)
+$c FeatAcc $.
+$( FeatAcc(occ,feat), value-reading feature access ("occ::feat" in KerML), is
+   class. $)
+cfeatacc $a class FeatAcc ( occ , feat ) $.
+
+$( FeatAccP is constant $)
+$c FeatAccP $.
+$( FeatAccP(occ,boo,inst), predicate-reading feature access for a Boolean-valued
+   feature at a given instant, is wff. A genuinely independent primitive from
+   FeatAcc, not derived from it -- there is no sound way to recover "this
+   feature value denotes true" from FeatAcc's class-valued result alone. $)
+wfeataccp $a wff FeatAccP ( occ , boo , inst ) $.
+
+$( TrueItem, FalseItem are constants: opaque canonical values standing for the
+   Boolean literals true/false, needed once GetChangeToTrue/GetChangeToFalse
+   compare their output against a literal. $)
+$c TrueItem FalseItem $.
+ctrueitem  $a class TrueItem  $.
+cfalseitem $a class FalseItem $.
+
+$( Get is constant $)
+$c Get $.
+$( Get(occ,feat,inst) is class $)
+cget $a class Get ( occ , feat , inst ) $.
+
+$( Define Get: the value of occ's feature feat at inst is the interpretation of
+   occ::feat at inst. $)
+df-Get $a |- Get ( occ , feat , inst ) = boldI [[ FeatAcc ( occ , feat ) , inst ]] $.
+
+$( GetNow is constant $)
+$c GetNow $.
+$( GetNow(occ,feat) is class $)
+cgetnow $a class GetNow ( occ , feat ) $.
+
+$( Define GetNow: a convenience specialization of Get, always read at now. $)
+df-GetNow $a |- GetNow ( occ , feat ) = Get ( occ , feat , now ) $.
+
+$( SetNow is constant $)
+$c SetNow $.
+$( SetNow(occ,feat,valu) is wff $)
+wsetnow $a wff SetNow ( occ , feat , valu ) $.
+
+$( Define SetNow: the write counterpart to Get/GetNow, constraining occ's
+   feature feat to equal valu at now. $)
+df-SetNow $a |- ( SetNow ( occ , feat , valu ) <->
+  Get ( occ , feat , now ) = valu ) $.
+
+$( GetChange is constant $)
+$c GetChange $.
+$( GetChange(occ,feat,inst,valu) is wff $)
+wgetchange $a wff GetChange ( occ , feat , inst , valu ) $.
+
+$( Define GetChange: if occ's feature feat was stable at Get(occ,feat,inst)
+   throughout [inst,now) and has changed as of now, then valu is that new
+   (changed) value. $)
+df-GetChange $a |- ( GetChange ( occ , feat , inst , valu ) <->
+  ( ( -. Get ( occ , feat , inst ) = Get ( occ , feat , now ) /\
+      A. tv e. ( inst [,) now ) Get ( occ , feat , tv ) = Get ( occ , feat , inst ) )
+    -> valu = Get ( occ , feat , now ) ) ) $.
+
+$( GetBooleanChange is constant $)
+$c GetBooleanChange $.
+$( GetBooleanChange(occ,boo,inst,flag) is wff $)
+wgetbooleanchange $a wff GetBooleanChange ( occ , boo , inst , flag ) $.
+
+$( Define GetBooleanChange: GetChange specialized to a Boolean-valued feature,
+   restated verbatim with boo/flag in place of feat/valu. $)
+df-GetBooleanChange $a |- ( GetBooleanChange ( occ , boo , inst , flag ) <->
+  GetChange ( occ , boo , inst , flag ) ) $.
+
+$( GetChangeToTrue is constant $)
+$c GetChangeToTrue $.
+$( GetChangeToTrue(occ,boo,inst,flag) is wff $)
+wgetchangetotrue $a wff GetChangeToTrue ( occ , boo , inst , flag ) $.
+
+$( Define GetChangeToTrue: does not wait if occ's feature boo is already true
+   -- if boo holds at now and did not hold throughout [inst,now), flag is
+   immediately true. Uses FeatAccP (the predicate reading), not Get. $)
+df-GetChangeToTrue $a |- ( GetChangeToTrue ( occ , boo , inst , flag ) <->
+  ( ( FeatAccP ( occ , boo , now ) /\
+      A. tv e. ( inst [,) now ) -. FeatAccP ( occ , boo , tv ) )
+    -> flag = TrueItem ) ) $.
+
+$( GetChangeToFalse is constant $)
+$c GetChangeToFalse $.
+$( GetChangeToFalse(occ,boo,inst,flag) is wff $)
+wgetchangetofalse $a wff GetChangeToFalse ( occ , boo , inst , flag ) $.
+
+$( Define GetChangeToFalse: mirror image of GetChangeToTrue. $)
+df-GetChangeToFalse $a |- ( GetChangeToFalse ( occ , boo , inst , flag ) <->
+  ( ( -. FeatAccP ( occ , boo , now ) /\
+      A. tv e. ( inst [,) now ) FeatAccP ( occ , boo , tv ) )
+    -> flag = FalseItem ) ) $.
+
 $( ******************* End of Supplemental Formal Semantics ******************* $)
