@@ -3209,24 +3209,92 @@ $( Define Allen's interval nonoverlaps. $)
 df-nonoverlaps $a |- nonoverlaps ( A , B ) <->
   ( ( death ( A ) b~< birth ( B ) ) \/ ( death ( B ) b~< birth ( A ) ) ) $.
 
+$( Variables for finitePartition and its consequences: finpn (the tick count),
+   finbreaks (the tick sequence, a genuine setvar function), fini/finj (tick
+   indices), findd (a generic Occurrence, ranged over universally). $)
+$v finpn finbreaks fini finj findd $.
+vfinpn $f setvar finpn $.
+vfinbreaks $f setvar finbreaks $.
+vfini $f setvar fini $.
+vfinj $f setvar finj $.
+vfindd $f setvar findd $.
+
+$( finitePartition is a genuine new modeling commitment (2026-08-26, ported
+   from Lean4SFS/SFS.lean's own finitePartition axiom, at direct request):
+   every Occurrence's raw interpretation only ever changes at finitely many
+   *shared* instants -- a single "event calendar," not a per-Occurrence one.
+   Stated without reference to "pieces" to sidestep any half-open/closed
+   boundary bookkeeping: if there is no shared tick strictly inside
+   (t_1,t_2], d's value cannot have changed between t_1 and t_2.  This is
+   what fixes next's permanent vacuity (bl.nextdense below) and changed's
+   own gap -- not hyperreals, which cannot help here: two distinct time
+   values are both standard reals, so neither "nothing between" nor
+   "infinitesimally close" can ever hold for them, transfer principle or
+   not (a dead end reached and rejected in Lean4SFS/SFS.lean before this
+   axiom was proposed there). $)
+finitePartition $a |- E. finpn e. NN0 E. finbreaks
+  ( ( ( finbreaks : ( 0 ... finpn ) --> TIME /\
+        ( ( finbreaks ` 0 ) = 0 /\ ( finbreaks ` finpn ) = now ) ) /\
+      A. fini e. ( 0 ... finpn ) A. finj e. ( 0 ... finpn )
+        ( fini < finj -> ( finbreaks ` fini ) b~< ( finbreaks ` finj ) ) ) /\
+    A. findd A. t_1 A. t_2 ( t_1 b~<= t_2 ->
+      ( -. E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) e. ( t_1 (,] t_2 ) ->
+        boldI [[ findd , t_1 ]] = boldI [[ findd , t_2 ]] ) ) ) $.
+
+$( isTick is constant $)
+$c isTick $.
+$( isTick(t_1) is wff: t_1 is one of the finitely many shared ticks --
+   existentially quantifying its own witnessing finitePartition instance,
+   rather than extracting one canonical global choice the way
+   Lean4SFS/SFS.lean's tickCount/ticks do (Metamath's iota/`the x such
+   that' operator needs *unique* existence to be usable, and
+   finitePartition's own witness is not unique -- any finite refinement of
+   a valid partition is itself valid). $)
+wistick $a wff isTick ( t_1 ) $.
+
+$( Define isTick: t_1 equals some tick of some valid finite partition. $)
+df-istick $a |- ( isTick ( t_1 ) <->
+  E. finpn e. NN0 E. finbreaks
+    ( ( ( ( finbreaks : ( 0 ... finpn ) --> TIME /\
+            ( ( finbreaks ` 0 ) = 0 /\ ( finbreaks ` finpn ) = now ) ) /\
+          A. fini e. ( 0 ... finpn ) A. finj e. ( 0 ... finpn )
+            ( fini < finj -> ( finbreaks ` fini ) b~< ( finbreaks ` finj ) ) ) /\
+        A. findd A. t_2 A. t_3 ( t_2 b~<= t_3 ->
+          ( -. E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) e. ( t_2 (,] t_3 ) ->
+            boldI [[ findd , t_2 ]] = boldI [[ findd , t_3 ]] ) ) ) /\
+      E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) = t_1 ) $.
+
 $( next is constant $)
 $c next $.
 $( next(t_1,t_2) is wff $)
 wnext $a wff next ( t_1 , t_2 ) $.
 
-$( Define next: t_2 immediately follows t_1, no instant strictly between
-   (df-bl.next in Supplemental-Semantics).  The witness for "no instant
-   between" is a genuine setvar x, bridged to class position via cv;
-   see bl.nexttp for why this matters (contrast df-exc/df-flmc above,
-   which quantify over class-typed s_1/s_2/p_0 and so cannot actually be
-   unfolded through wex in a real proof). $)
+$( Define next: t_2 immediately follows t_1.  Redefined 2026-08-26 (ported
+   from Lean4SFS/SFS.lean's own redesign, at direct request; was "t_1 b~<
+   t_2 and no instant strictly between," provably vacuous on dense TIME
+   regardless of t_1/t_2 -- see the retired bl.nextdense) as "t_1, t_2 are
+   both shared ticks (isTick), t_1 b~< t_2, and no *other tick* lies
+   strictly between them" -- genuine successor-in-a-finite-set, not "no
+   real number between," so no longer forced to be false for every input.
+   The witness for "no OTHER tick between" is a genuine setvar x, bridged
+   to class position via cv, same reasoning as the original df-next. $)
 df-next $a |- ( next ( t_1 , t_2 ) <->
-  ( t_1 b~< t_2 /\ -. E. x ( t_1 b~< x /\ x b~< t_2 ) ) ) $.
+  ( ( ( isTick ( t_1 ) /\ isTick ( t_2 ) ) /\ t_1 b~< t_2 ) /\
+    -. E. x ( ( isTick ( x ) /\ t_1 b~< x ) /\ x b~< t_2 ) ) ) $.
 
-$( next(t_1,t_2) implies t_1 precedes t_2.  (Proved) $)
+$( next(t_1,t_2) implies t_1 precedes t_2.  Repaired 2026-08-26 for df-next's
+   own redesign (isTick(t_1)/\isTick(t_2)/\t_1 b~< t_2, the third conjunct
+   of a left-associated 4-way /\, was the whole 2nd conjunct before). $)
 bl.nexttp $p |- ( next ( t_1 , t_2 ) -> t_1 b~< t_2 ) $=
-  vt1 vt2 wnext vt1 vt2 wtp vt1 vx cv wtp vx cv vt2 wtp wa vx wex wn vx vt1 vt2
-  df-next simplbi $.
+  vt1 vt2 wnext
+  vt1 wistick vt2 wistick wa
+  vt1 vt2 wtp
+  vt1 vt2 wnext
+  vt1 wistick vt2 wistick wa vt1 vt2 wtp wa
+  vx cv wistick vt1 vx cv wtp wa vx cv vt2 wtp wa vx wex wn
+  vx vt1 vt2
+  df-next simplbi
+  simprd $.
 
 $( t_2 is a set given the (t_1 b~<t_2 /\ t_2 b~<t_3) witness data; helper for
    bl.nextwit. $)
@@ -3253,6 +3321,28 @@ bl.nextwit $p |- ( ( t_2 e. TIME /\ ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ->
   vt1 vt2 wtp vx cv vt3 wtp vt2 vt3 wtp vx cv vt2 vt1 bl.tpeq2 vx cv vt2 vt3
   bl.tpeq1 anbi12d sbcieg syl mpbird vt1 vx cv wtp vx cv vt3 wtp wa vx vt2
   spesbc syl $.
+
+$( Uniqueness of next (eq:bl.nextuniq in Supplemental-Semantics, matching
+   Lean4SFS/SFS.lean's own next_uniq, 2026-08-26).  Genuinely reinstated
+   (was vacuously true before df-next's redesign, since next was
+   unsatisfiable for every input).  Statement includes explicit
+   t_2/t_3 e. TIME hypotheses (df-next's own isTick clauses don't by
+   themselves give TIME-membership without a further "isTick(t) -> t e.
+   TIME" helper lemma, not yet added) -- a real, well-formed theorem,
+   correctly typed and citable, but NOT YET PROVED: the natural proof
+   (real-number trichotomy on t_2,t_3 via lttri3, bridged from b~< via
+   df-bl.before, deriving a contradiction in each non-equal case by
+   instantiating the *other* next's "no tick between" clause at the
+   would-be-between value) needs a genuinely new existential-witnessing
+   helper mirroring bl.nextwit above but carrying an extra isTick(x)
+   conjunct through the same sbcieg-driven substitution machinery --
+   bl.nextwit itself doesn't suffice, its own witness lacks isTick(x).
+   Left here as a known, explicitly-scoped gap (2026-08-26 investigation
+   found this exceeds "bounded effort," matching the file's existing
+   unproved-placeholder convention: bl.ty, bl.tyt, bl.atintroc, povrfl,
+   punrfl, pimrfl, pdjrfl) rather than guessed at or rushed. $)
+bl.nextuniq $p |- ( ( ( t_2 e. TIME /\ t_3 e. TIME ) /\
+  ( next ( t_1 , t_2 ) /\ next ( t_1 , t_3 ) ) ) -> t_2 = t_3 ) $= ? $.
 
 $( openLeft is constant $)
 $c openLeft $.
@@ -3514,14 +3604,37 @@ $( changed(occ,t_1) is class: the time when occ's interpretation most recently
    changed before t_1 (Chapter/KernelSemanticsChapter.tex sec 3.1.5). $)
 cchanged $a class changed ( occ , t_1 ) $.
 
-$( Define changed: changed(occ,t_1) = t_2 iff t_2 precedes t_1, occ's
-   interpretation at t_1 differs from its interpretation at t_2 (or t_2 is 0,
-   meaning occ has not changed before t_1), and occ's interpretation is stable
-   at that t_2 value throughout the open interval (t_2,t_1). $)
+$( Redefined 2026-08-26 (ported from Lean4SFS/SFS.lean's own changed redesign,
+   at direct request): the original characterizing biconditional above was
+   close to vacuous for ordinary step-function occ -- for occ constant A
+   before some transition and B from it on, and any t_1 that isn't itself a
+   fresh transition instant, *no* t_2 satisfied its three conditions jointly
+   (the exact transition point failed the "differs" disjunct, its value
+   already matching occ's value at t_1; every earlier t_2 failed the
+   open-interval constancy clause, since (t_2,t_1) straddles the
+   transition).  Grounded in isTick/finitePartition instead: changed(occ,t_1)
+   is t_2 exactly when t_2 is a shared tick at or before t_1, occ's value
+   matches its own value at t_1 throughout every tick from t_2 up to t_1
+   (inclusive), and either t_2=0 (occ hasn't changed before t_1 at all) or
+   the tick immediately before t_2 has a *different* value from t_1's --
+   i.e. t_2 is genuinely the start of t_1's own current, matching-value run,
+   not merely some earlier point that happens to agree.  Total and
+   satisfiable for every occ/t_1, not merely characterized (finiteness of
+   the tick set is what makes this well-posed -- a full explicit Finset.max'-
+   style *construction* of changed as an unconditional class term, matching
+   Lean4SFS/SFS.lean's own noncomputable def exactly, would need its own new
+   canonical-choice/uniqueness apparatus beyond what isTick's per-formula
+   existential provides; not attempted here, this is the characterizing-axiom
+   level port only, same epistemic status the original df-bl.changed already
+   had). $)
+$v tw $.
+vtw $f class tw $.
 df-bl.changed $a |- ( changed ( occ , t_1 ) = t_2 <->
-  ( t_2 b~< t_1 /\
-    ( -. boldI [[ occ , t_1 ]] = boldI [[ occ , t_2 ]] \/ t_2 = 0 ) /\
-    A. tv e. ( t_2 (,) t_1 ) boldI [[ occ , tv ]] = boldI [[ occ , t_2 ]] ) ) $.
+  ( ( ( isTick ( t_2 ) /\ t_2 b~<= t_1 ) /\
+      A. tv ( ( isTick ( tv ) /\ ( t_2 b~<= tv /\ tv b~<= t_1 ) ) ->
+        boldI [[ occ , tv ]] = boldI [[ occ , t_1 ]] ) ) /\
+    ( t_2 = 0 \/
+      E. tw ( next ( tw , t_2 ) /\ -. boldI [[ occ , tw ]] = boldI [[ occ , t_1 ]] ) ) ) ) $.
 
 $( timeof is constant $)
 $c timeof $.
