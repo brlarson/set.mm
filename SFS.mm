@@ -3211,35 +3211,52 @@ df-nonoverlaps $a |- nonoverlaps ( A , B ) <->
 
 $( Variables for finitePartition and its consequences: finpn (the tick count),
    finbreaks (the tick sequence, a genuine setvar function), fini/finj (tick
-   indices), findd (a generic Occurrence, ranged over universally). $)
-$v finpn finbreaks fini finj findd $.
+   indices), findd (a generic Occurrence, ranged over universally).  finpn2/
+   finbreaks2 are a second, independent pair (2026-08-26) needed whenever a
+   proof must existentially instantiate two witnessing partitions at once
+   (e.g. bl.istickeq) -- reusing finpn/finbreaks for both would collide,
+   since they're meant to be fresh per-quantifier-scope, not proof-wide. $)
+$v finpn finbreaks fini finj findd finpn2 finbreaks2 $.
 vfinpn $f setvar finpn $.
 vfinbreaks $f setvar finbreaks $.
 vfini $f setvar fini $.
 vfinj $f setvar finj $.
 vfindd $f setvar findd $.
+vfinpn2 $f setvar finpn2 $.
+vfinbreaks2 $f setvar finbreaks2 $.
 
-$( finitePartition is a genuine new modeling commitment (2026-08-26, ported
-   from Lean4SFS/SFS.lean's own finitePartition axiom, at direct request):
-   every Occurrence's raw interpretation only ever changes at finitely many
-   *shared* instants -- a single "event calendar," not a per-Occurrence one.
-   Stated without reference to "pieces" to sidestep any half-open/closed
-   boundary bookkeeping: if there is no shared tick strictly inside
-   (t_1,t_2], d's value cannot have changed between t_1 and t_2.  This is
-   what fixes next's permanent vacuity (bl.nextdense below) and changed's
-   own gap -- not hyperreals, which cannot help here: two distinct time
-   values are both standard reals, so neither "nothing between" nor
-   "infinitesimally close" can ever hold for them, transfer principle or
-   not (a dead end reached and rejected in Lean4SFS/SFS.lean before this
-   axiom was proposed there). $)
-finitePartition $a |- E. finpn e. NN0 E. finbreaks
+$( isPartition is constant $)
+$c isPartition $.
+$( isPartition(finpn,finbreaks) is wff: finbreaks is a valid finite tick
+   sequence of length finpn+1 -- factored out as its own named abbreviation
+   (2026-08-26) so finitePartition/df-istick/downstream proofs don't need to
+   repeat this large formula verbatim every time it's needed. $)
+wispart $a wff isPartition ( finpn , finbreaks ) $.
+
+$( Define isPartition: finbreaks starts at 0, ends at now, is strictly
+   increasing on (0...finpn), and every Occurrence is constant between
+   consecutive ticks (no change unless a tick falls strictly inside the
+   interval). $)
+df-ispart $a |- ( isPartition ( finpn , finbreaks ) <->
   ( ( ( finbreaks : ( 0 ... finpn ) --> TIME /\
         ( ( finbreaks ` 0 ) = 0 /\ ( finbreaks ` finpn ) = now ) ) /\
       A. fini e. ( 0 ... finpn ) A. finj e. ( 0 ... finpn )
         ( fini < finj -> ( finbreaks ` fini ) b~< ( finbreaks ` finj ) ) ) /\
     A. findd A. t_1 A. t_2 ( t_1 b~<= t_2 ->
       ( -. E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) e. ( t_1 (,] t_2 ) ->
-        boldI [[ findd , t_1 ]] = boldI [[ findd , t_2 ]] ) ) ) $.
+        boldI [[ findd , t_1 ]] = boldI [[ findd , t_2 ]] ) ) ) ) $.
+
+$( finitePartition is a genuine new modeling commitment (2026-08-26, ported
+   from Lean4SFS/SFS.lean's own finitePartition axiom, at direct request):
+   every Occurrence's raw interpretation only ever changes at finitely many
+   *shared* instants -- a single "event calendar," not a per-Occurrence one.
+   This is what fixes next's permanent vacuity (bl.nextdense below) and
+   changed's own gap -- not hyperreals, which cannot help here: two distinct
+   time values are both standard reals, so neither "nothing between" nor
+   "infinitesimally close" can ever hold for them, transfer principle or
+   not (a dead end reached and rejected in Lean4SFS/SFS.lean before this
+   axiom was proposed there). $)
+finitePartition $a |- E. finpn e. NN0 E. finbreaks isPartition ( finpn , finbreaks ) $.
 
 $( isTick is constant $)
 $c isTick $.
@@ -3252,17 +3269,24 @@ $( isTick(t_1) is wff: t_1 is one of the finitely many shared ticks --
    a valid partition is itself valid). $)
 wistick $a wff isTick ( t_1 ) $.
 
-$( Define isTick: t_1 equals some tick of some valid finite partition. $)
+$( Define isTick: t_1 is in the range of some valid finite partition's tick
+   sequence -- equivalently "t_1 = some finbreaks(fini)", restated via ran
+   (2026-08-26) since finbreaks' domain is fixed to (0...finpn) by
+   isPartition's own first conjunct, and t_1 e. ran finbreaks lets
+   bl.istickeq below use plain membership congruence (eleq1d) instead of
+   bounded-existential congruence (rexbidv/rexbii), which turned out to
+   have a prohibitively expensive unification search in this database. $)
 df-istick $a |- ( isTick ( t_1 ) <->
   E. finpn e. NN0 E. finbreaks
-    ( ( ( ( finbreaks : ( 0 ... finpn ) --> TIME /\
-            ( ( finbreaks ` 0 ) = 0 /\ ( finbreaks ` finpn ) = now ) ) /\
-          A. fini e. ( 0 ... finpn ) A. finj e. ( 0 ... finpn )
-            ( fini < finj -> ( finbreaks ` fini ) b~< ( finbreaks ` finj ) ) ) /\
-        A. findd A. t_2 A. t_3 ( t_2 b~<= t_3 ->
-          ( -. E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) e. ( t_2 (,] t_3 ) ->
-            boldI [[ findd , t_2 ]] = boldI [[ findd , t_3 ]] ) ) ) /\
-      E. fini e. ( 0 ... finpn ) ( finbreaks ` fini ) = t_1 ) $.
+    ( isPartition ( finpn , finbreaks ) /\ t_1 e. ran finbreaks ) ) $.
+
+$( isTick respects equality of its argument (ordinary Leibniz congruence,
+   free from df-istick's own definition -- unlike bl.tpeq1/bl.tpeq2, isTick
+   is not a bare primitive, its only occurrence of its argument is in a
+   genuine class equality, so this needs no new axiom). $)
+bl.istickeq $p |- ( A = B -> ( isTick ( A ) <-> isTick ( B ) ) ) $=
+  ? ? ? ? ? ? ? ? ? df-istick a1i ? ? ? ? ? ? ? ? ? ? ? ? ? df-rex a1i ?
+  bitrd ? ? ? ? ? ? ? df-istick bicomi a1i bitrd bitrd $.
 
 $( next is constant $)
 $c next $.
