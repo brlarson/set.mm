@@ -3101,18 +3101,23 @@ wexists $a wff exists ( A , t_0 ) $.
 
 $( birth is constant $)
 $c birth $.
-$( birth(A) is wff $)
-wbirth $a wff birth ( A ) $. 
+$( birth(A) is a class (a time value, used via = and b~< throughout this
+   section -- was wrongly typed wff before this fix; class syntax added so
+   birth(A) actually parses against a real production instead of being
+   accepted as unvalidated $a axiom text). $)
+cbirth $a class birth ( A ) $.
 
 $( death is constant $)
 $c death $.
-$( death(A) is wff $)
-wdeath $a wff death ( A ) $. 
+$( death(A) is a class, same reasoning as birth(A) above (was wrongly typed
+   wff before this fix). $)
+cdeath $a class death ( A ) $.
 
 $( life is constant $)
 $c life $.
-$( life(A) is wff $)
-wlife $a wff life ( A ) $. 
+$( life(A) is a class, same reasoning as birth(A) above (was wrongly typed
+   wff before this fix). $)
+clife $a class life ( A ) $.
 
 $( precedes is constant $)
 $c precedes $.
@@ -3158,13 +3163,19 @@ wnonoverlaps $a wff nonoverlaps ( A , B ) $.
 $( Define element existence predicate. $)
 df-exists $a |- exists ( A , t_0 ) <-> -. boldI [[ A , t_0 ]] = (/) $.
  
-$( Define birth time. $)
+$( Define birth time. Fixed 2026-08-26: the inner universal quantifier's body
+   previously reused the outer t_0 instead of the bound t_1 (-. exists(A,t_0)
+   instead of -. exists(A,t_1)), making the whole biconditional unsatisfiable
+   for any t_0 > 0 (the reused-t_0 body directly contradicts the first
+   conjunct exists(A,t_0)) -- a transcription slip already suspected in
+   Lean4SFS/SFS.lean's own doc comment on birthIff but never back-ported to
+   this axiom's actual text until now. $)
 df-birth $a |- ( birth ( A ) = t_0 ) <->
-  ( exists ( A , t_0 ) /\ A. t_1 e. ( 0 [,) t_0 ) -. exists ( A , t_0 ) ) $.
+  ( exists ( A , t_0 ) /\ A. t_1 e. ( 0 [,) t_0 ) -. exists ( A , t_1 ) ) $.
 
-$( Define death time. $)
+$( Define death time. Same transcription-slip fix as df-birth above. $)
 df-death $a |- ( death ( A ) = t_0 ) <->
-  ( exists ( A , t_0 ) /\ A. t_1 e. ( t_0 (,] now ) -. exists ( A , t_0 ) ) $.
+  ( exists ( A , t_0 ) /\ A. t_1 e. ( t_0 (,] now ) -. exists ( A , t_1 ) ) $.
 
 $( Define lifetime. $)
 df-lifetime $a |- life ( A ) = ( birth ( A ) [,] death ( A ) ) $.
