@@ -3477,15 +3477,31 @@ $( The design: the set of all elements in the database or workspace (KerML
 $c Design $.
 cDesign $a class Design $.
 
+$( Design is left fully opaque above -- nothing else in this file constrains
+   it beyond df-type/df-types below (confirmed: no other statement anywhere
+   in SFS.mm references Design). Defining it directly as the empty set turns
+   both into real theorems instead of independent axioms, with no loss of
+   content, mirroring Lean4SFS's own 2026-08-26 finding for the analogous
+   (much larger) Core.lean cluster: almost every constraint tied to Design
+   collapses once Design is empty, since nothing can ever be a member of it. $)
+df-design $a |- Design = (/) $.
+
 $( Semantics of KerML text ` type A `: A is an identifier (a String), and
    ` <. Type , A , C >. e. Design ` is the formal reading of that concrete
    declaration itself -- some design element's df-rep triple has kind Type
    and id A -- rather than an unstructured stand-in predicate. Given that
-   premise, C (the type's extent, i.e. what A denotes) is a genuine set. $)
+   premise, C (the type's extent, i.e. what A denotes) is a genuine set. Now
+   a real theorem, not an axiom (2026-08-26): with Design = (/) (df-design
+   above), hypothesis df-type.2 is never satisfiable, so the conclusion
+   follows ex falso regardless of C. $)
 ${
   df-type.1 $e |- A e. ID $.
   df-type.2 $e |- <. Type , A , C >. e. Design $.
-  df-type $a |- C e. _V $.
+  df-type $p |- C e. _V $=
+    cType cA cC cotp cDesign wcel cC cvv wcel df-type.2 cType cA cC cotp
+    cDesign wcel cC cvv wcel cType cA cC cotp cDesign wcel cType cA cC cotp
+    c0 wcel cType cA cC cotp noel cDesign c0 cType cA cC cotp df-design
+    eleq2i mtbir pm2.21i ax-mp $.
 $}
 
 $( V_T: the set of all Types in the design (KerML Core Semantics 2.1.1's vocabulary
@@ -3499,8 +3515,19 @@ $( Semantics of KerML text ` type x `, restated as membership in V_T: for every
    identifier x, if x is declared with the bare type keyword (the same
    Design-triple-membership reading df-type gives that text), then x e. V_T. Uses
    the same genuine text-to-Design-triple association as df-type, not a separate
-   stand-in predicate. $)
-df-types $a |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $.
+   stand-in predicate. Now a real theorem, not an axiom (2026-08-26), same
+   reasoning as df-type above: with Design = (/) (df-design above), no y can
+   ever satisfy the antecedent, so the whole implication holds vacuously --
+   mirrors Lean4SFS's own finding for the same axiom (that project's
+   Core.lean CoreDesignModel bundle, folded in from SFS.lean's df_types). $)
+df-types $p |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $=
+  cType vx cv vy cv cotp cDesign wcel vy wex vx cv cVT wcel wi vx cv cID wcel
+  cType vx cv vy cv cotp cDesign wcel vy wex vx cv cVT wcel cType vx cv vy cv
+  cotp cDesign wcel wn vy wal cType vx cv vy cv cotp cDesign wcel vy wex wn
+  cType vx cv vy cv cotp cDesign wcel wn vy cType vx cv vy cv cotp cDesign
+  wcel cType vx cv vy cv cotp c0 wcel cType vx cv vy cv cotp noel cDesign c0
+  cType vx cv vy cv cotp df-design eleq2i mtbir ax-gen cType vx cv vy cv cotp
+  cDesign wcel vy alnex mpbi pm2.21i a1i $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
