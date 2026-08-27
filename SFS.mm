@@ -3217,21 +3217,43 @@ df-meets $a |- meets ( A , B ) <-> ( effectiveEnd ( A ) = birth ( B ) ) $.
 $( Define Allen's interval overlaps.  Re-expressed via effectiveEnd. $)
 df-overlaps $a |- overlaps ( A , B ) <-> ( birth ( B ) b~< effectiveEnd ( A ) ) $.
 
-$( Define Allen's interval starts.  Re-expressed via effectiveEnd. $)
+$( openLeft is constant $)
+$c openLeft $.
+$( openLeft(A) is wff $)
+wopenleft $a wff openLeft ( A ) $.
+
+$( openRight is constant $)
+$c openRight $.
+$( openRight(A) is wff $)
+wopenright $a wff openRight ( A ) $.
+
+$( Define Allen's interval starts.  Re-expressed via effectiveEnd (2026-08-27);
+   also fixed the same day to add the openLeft agreement conjunct
+   Allen.kerml's/Lean4SFS's own starts formula has, which this axiom was
+   missing (a pre-existing divergence, flagged then fixed at direct
+   request). openLeft/openRight are wff, not class, so "agreement" is
+   phrased as <->, not =. $)
 df-starts $a |- starts ( A , B ) <->
-  ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( B ) b~< effectiveEnd ( A ) ) ) $.
+  ( ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( B ) b~< effectiveEnd ( A ) ) ) /\
+    ( openLeft ( A ) <-> openLeft ( B ) ) ) $.
 
 $( Define Allen's interval during.  Re-expressed via effectiveEnd. $)
 df-during $a |- during ( A , B ) <->
   ( ( birth ( B ) b~<= birth ( A ) ) /\ ( effectiveEnd ( A ) b~<= effectiveEnd ( B ) ) ) $.
 
-$( Define Allen's interval finishes.  Re-expressed via effectiveEnd. $)
+$( Define Allen's interval finishes.  Re-expressed via effectiveEnd; also fixed
+   the same day to add the openRight agreement conjunct, same reasoning as
+   df-starts above. $)
 df-finishes $a |- finishes ( A , B ) <->
-  ( ( birth ( B ) b~< birth ( A ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) $.
+  ( ( ( birth ( B ) b~< birth ( A ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) /\
+    ( openRight ( A ) <-> openRight ( B ) ) ) $.
 
-$( Define Allen's interval coincident.  Re-expressed via effectiveEnd. $)
+$( Define Allen's interval coincident.  Re-expressed via effectiveEnd; also
+   fixed the same day to add both the openLeft and openRight agreement
+   conjuncts, same reasoning as df-starts above. $)
 df-coincident $a |- coincident ( A , B ) <->
-  ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) $.
+  ( ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) /\
+    ( ( openLeft ( A ) <-> openLeft ( B ) ) /\ ( openRight ( A ) <-> openRight ( B ) ) ) ) $.
 
 $( Define Allen's interval nonoverlaps.  Re-expressed via effectiveEnd. $)
 df-nonoverlaps $a |- nonoverlaps ( A , B ) <->
@@ -3395,16 +3417,6 @@ $( Uniqueness of next (eq:bl.nextuniq in Supplemental-Semantics, matching
    punrfl, pimrfl, pdjrfl) rather than guessed at or rushed. $)
 bl.nextuniq $p |- ( ( ( t_2 e. TIME /\ t_3 e. TIME ) /\
   ( next ( t_1 , t_2 ) /\ next ( t_1 , t_3 ) ) ) -> t_2 = t_3 ) $= ? $.
-
-$( openLeft is constant $)
-$c openLeft $.
-$( openLeft(A) is wff $)
-wopenleft $a wff openLeft ( A ) $.
-
-$( openRight is constant $)
-$c openRight $.
-$( openRight(A) is wff $)
-wopenright $a wff openRight ( A ) $.
 
 $( nearlymeets is constant $)
 $c nearlymeets $.
