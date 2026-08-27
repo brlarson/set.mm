@@ -2870,6 +2870,14 @@ $c PartOf $.
 $( p_x PartOf p_y is a wff $)
 wpartof $a wff p_x PartOf p_y $.
 
+$( ContainedBy is constant $)
+$c ContainedBy $.
+$( p_x ContainedBy p_y is a wff: the direct (one-level) proper part relation,
+   distinct from PartOf (the general, possibly-transitive parthood relation)
+   -- Mereology.kerml's own new ContainedBy (2026-08-27, user-added directly
+   in the KerML source). $)
+wcontby $a wff p_x ContainedBy p_y $.
+
 $( Overlap is constant $)
 $c Overlap $.
 $( p_x Overlap p_y is a wff $)
@@ -2906,6 +2914,14 @@ df-par $a |- -. p_x PartOf p_x $.
 
 $( Define part transitivity. $)
 df-ptr $a |- ( ( p_x PartOf p_y /\ p_y PartOf p_z ) -> p_x PartOf p_z ) $.
+
+$( Define containment: every direct container is also a (general) part.
+   Mereology.kerml's own new Containment (2026-08-27, user-added). $)
+df-containment $a |- ( p_x ContainedBy p_y -> p_x PartOf p_y ) $.
+
+$( Define unique container: each occurrence has at most one direct container.
+   Mereology.kerml's own new UniqueContainer (2026-08-27, user-added). $)
+df-uniquecontainer $a |- ( ( p_x ContainedBy p_y /\ p_x ContainedBy p_z ) -> p_y = p_z ) $.
 
 $( Define part overlap. $)
 df-pov $a |- p_x Overlap p_y <-> E. p_z ( p_z PartOf p_x /\ p_z PartOf p_y ) $.
