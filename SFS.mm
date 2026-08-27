@@ -3180,34 +3180,62 @@ df-death $a |- ( death ( A ) = t_0 ) <->
 $( Define lifetime. $)
 df-lifetime $a |- life ( A ) = ( birth ( A ) [,] death ( A ) ) $.
 
-$( Define Allen's interval precedes. $)
-df-precedes $a |- precedes ( A , B ) <-> ( death ( A ) b~< birth ( B ) ) $.
+$( activeNow is constant $)
+$c activeNow $.
+$( activeNow(A) is wff $)
+wactivenow $a wff activeNow ( A ) $.
 
-$( Define Allen's interval meets. $)
-df-meets $a |- meets ( A , B ) <-> ( death ( A ) = birth ( B ) ) $.
+$( effectiveEnd is constant $)
+$c effectiveEnd $.
+$( effectiveEnd(A) is a class $)
+ceffectiveend $a class effectiveEnd ( A ) $.
 
-$( Define Allen's interval overlaps. $)
-df-overlaps $a |- overlaps ( A , B ) <-> ( birth ( B ) b~< death ( A ) ) $.
+$( Define active-now: A has not reached its endShot by now -- still exists at
+   the current instant.  Ported from Lean4SFS/SFS.lean's own activeNow
+   (2026-08-27, at direct request: "Re-formulate Allen's intervals, always
+   evaluated at Time now, which if the endShot has not been reached, the end
+   of the interval is considered to be now"). $)
+df-activenow $a |- ( activeNow ( A ) <-> exists ( A , now ) ) $.
 
-$( Define Allen's interval starts. $)
-df-starts $a |- starts ( A , B ) <-> 
-  ( ( birth ( A ) = birth ( B ) ) /\ ( death ( B ) b~< death ( A ) ) ) $.
+$( Define effective end: A's real death time if it has one, else now itself
+   -- "the end of the interval is considered to be now."  Total, unlike
+   death, which stays partial (matches Lean4SFS/SFS.lean's own split between
+   death and effectiveEnd: death remains the faithful, possibly-undetermined
+   structural fact, effectiveEnd is the new Domain-logic-facing reading Allen's
+   intervals below are re-expressed in terms of). $)
+df-effectiveend $a |- ( effectiveEnd ( A ) = t_0 <->
+  ( ( -. activeNow ( A ) /\ death ( A ) = t_0 ) \/
+    ( activeNow ( A ) /\ t_0 = now ) ) ) $.
 
-$( Define Allen's interval during. $)
-df-during $a |- during ( A , B ) <-> 
-  ( ( birth ( B ) b~<= birth ( A ) ) /\ ( death ( A ) b~<= death ( B ) ) ) $.
+$( Define Allen's interval precedes.  Re-expressed via effectiveEnd
+   (2026-08-27), not death directly -- see df-effectiveend above. $)
+df-precedes $a |- precedes ( A , B ) <-> ( effectiveEnd ( A ) b~< birth ( B ) ) $.
 
-$( Define Allen's interval finishes. $)
-df-finishes $a |- finishes ( A , B ) <-> 
-  ( ( birth ( B ) b~< birth ( A ) ) /\ ( death ( A ) = death ( B ) ) ) $.
+$( Define Allen's interval meets.  Re-expressed via effectiveEnd. $)
+df-meets $a |- meets ( A , B ) <-> ( effectiveEnd ( A ) = birth ( B ) ) $.
 
-$( Define Allen's interval coincident. $)
-df-coincident $a |- coincident ( A , B ) <-> 
-  ( ( birth ( A ) = birth ( B ) ) /\ ( death ( A ) = death ( B ) ) ) $.
+$( Define Allen's interval overlaps.  Re-expressed via effectiveEnd. $)
+df-overlaps $a |- overlaps ( A , B ) <-> ( birth ( B ) b~< effectiveEnd ( A ) ) $.
 
-$( Define Allen's interval nonoverlaps. $)
+$( Define Allen's interval starts.  Re-expressed via effectiveEnd. $)
+df-starts $a |- starts ( A , B ) <->
+  ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( B ) b~< effectiveEnd ( A ) ) ) $.
+
+$( Define Allen's interval during.  Re-expressed via effectiveEnd. $)
+df-during $a |- during ( A , B ) <->
+  ( ( birth ( B ) b~<= birth ( A ) ) /\ ( effectiveEnd ( A ) b~<= effectiveEnd ( B ) ) ) $.
+
+$( Define Allen's interval finishes.  Re-expressed via effectiveEnd. $)
+df-finishes $a |- finishes ( A , B ) <->
+  ( ( birth ( B ) b~< birth ( A ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) $.
+
+$( Define Allen's interval coincident.  Re-expressed via effectiveEnd. $)
+df-coincident $a |- coincident ( A , B ) <->
+  ( ( birth ( A ) = birth ( B ) ) /\ ( effectiveEnd ( A ) = effectiveEnd ( B ) ) ) $.
+
+$( Define Allen's interval nonoverlaps.  Re-expressed via effectiveEnd. $)
 df-nonoverlaps $a |- nonoverlaps ( A , B ) <->
-  ( ( death ( A ) b~< birth ( B ) ) \/ ( death ( B ) b~< birth ( A ) ) ) $.
+  ( ( effectiveEnd ( A ) b~< birth ( B ) ) \/ ( effectiveEnd ( B ) b~< birth ( A ) ) ) $.
 
 $( Variables for finitePartition and its consequences: finpn (the tick count),
    finbreaks (the tick sequence, a genuine setvar function), fini/finj (tick
@@ -3385,13 +3413,14 @@ wnearlymeets $a wff nearlymeets ( A , B ) $.
 
 $( Define the Allen's-interval-adjacent relation nearlymeets (Allen.kerml's own
    nearlyMeets, df-nearlymeets in Supplemental-Semantics): A and B don't meet,
-   but there is no instant strictly between death(A) and birth(B) -- either
-   because they share that boundary instant and A is open-right or B is
+   but there is no instant strictly between effectiveEnd(A) and birth(B) --
+   either because they share that boundary instant and A is open-right or B is
    open-left there, or because there simply is no instant between under
-   next(), even without either boundary being open. $)
+   next(), even without either boundary being open.  Re-expressed via
+   effectiveEnd (2026-08-27), not death directly. $)
 df-nearlymeets $a |- ( nearlymeets ( A , B ) <->
-  ( ( ( birth ( B ) = death ( A ) ) /\ ( openRight ( A ) \/ openLeft ( B ) ) )
-    \/ next ( death ( A ) , birth ( B ) ) ) ) $.
+  ( ( ( birth ( B ) = effectiveEnd ( A ) ) /\ ( openRight ( A ) \/ openLeft ( B ) ) )
+    \/ next ( effectiveEnd ( A ) , birth ( B ) ) ) ) $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
