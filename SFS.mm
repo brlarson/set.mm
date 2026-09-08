@@ -3412,6 +3412,45 @@ bl.nextwit $p |- ( ( t_2 e. TIME /\ ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ->
   bl.tpeq1 anbi12d sbcieg syl mpbird vt1 vx cv wtp vx cv vt3 wtp wa vx vt2
   spesbc syl $.
 
+$( Existential witnessing for df-next's own "no tick between" clause
+   (carries isTick(x), unlike bl.nextwit above which was built for the
+   pre-redesign next and lacks it), right-associated to match this
+   lemma's own hypothesis shape exactly (avoids reassociating conjuncts
+   inside the sbcieg substitution machinery -- bl.nextwit2 below handles
+   the reassociation to df-next's own left-assoc shape separately): if
+   t_2 is itself a tick strictly between t_1 and t_3, some tick x is.
+
+   2026-09-08 investigation (real progress, not yet closed): the ASSIGN-
+   based interactive proof of this exact lemma reaches full mathematical
+   completion -- every leaf congruence (bl.istickeq for isTick(x)<->
+   isTick(t_2), bl.tpeq2 for t_1 b~<x<->t_1 b~<t_2, bl.tpeq1 for x b~<t_3
+   <->t_2 b~<t_3, combined via two nested anbi12d calls into the single
+   sbcieg.1 hypothesis, then sbcieg+mpbird+syl+spesbc exactly mirroring
+   bl.nextwit's own proof shape one layer deeper) unifies without error
+   when each is assigned in turn -- but the resulting SAVEd proof still
+   contains literal "?" placeholders: the outer x=t_2 substitution
+   metavariables ($15/$17 in one such run) never get pinned to the
+   concrete x/t_2 terms by any of the individual ASSIGN calls, even
+   though each call's OWN local unification succeeds and reports no
+   error. IMPROVE ALL does not close the remaining gap either. This
+   matches (same symptom, adjacent lemma) the persistent, previously-
+   unresolved blocker already noted in this project's own toolchain
+   history for bl.nextlt/bl.nlt7 -- a genuine tool-level unification-
+   propagation issue with this style of nested-substitution-congruence
+   proof, not a gap in the mathematical strategy. Left here as a known,
+   explicitly-scoped, closely-investigated gap rather than guessed at or
+   forced with a hand-patched RPN of uncertain correctness. $)
+bl.nextwit1a $p |- ( ( t_2 e. TIME /\ ( isTick ( t_2 ) /\
+    ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ) ->
+  E. x ( isTick ( x ) /\ ( t_1 b~< x /\ x b~< t_3 ) ) ) $= ? $.
+
+$( bl.nextwit1a reassociated to df-next's own left-assoc conjunction
+   shape (needs bl.nextwit1a itself proved first -- exbii the biconditional
+   from anass through the existential, then sylibr). $)
+bl.nextwit2 $p |- ( ( t_2 e. TIME /\ ( isTick ( t_2 ) /\
+    ( t_1 b~< t_2 /\ t_2 b~< t_3 ) ) ) ->
+  E. x ( ( isTick ( x ) /\ t_1 b~< x ) /\ x b~< t_3 ) ) $= ? $.
+
 $( Uniqueness of next (eq:bl.nextuniq in Supplemental-Semantics, matching
    Lean4SFS/SFS.lean's own next_uniq, 2026-08-26).  Genuinely reinstated
    (was vacuously true before df-next's redesign, since next was
@@ -3423,14 +3462,12 @@ $( Uniqueness of next (eq:bl.nextuniq in Supplemental-Semantics, matching
    (real-number trichotomy on t_2,t_3 via lttri3, bridged from b~< via
    df-bl.before, deriving a contradiction in each non-equal case by
    instantiating the *other* next's "no tick between" clause at the
-   would-be-between value) needs a genuinely new existential-witnessing
-   helper mirroring bl.nextwit above but carrying an extra isTick(x)
-   conjunct through the same sbcieg-driven substitution machinery --
-   bl.nextwit itself doesn't suffice, its own witness lacks isTick(x).
-   Left here as a known, explicitly-scoped gap (2026-08-26 investigation
-   found this exceeds "bounded effort," matching the file's existing
-   unproved-placeholder convention: bl.ty, bl.tyt, bl.atintroc, povrfl,
-   punrfl, pimrfl, pdjrfl) rather than guessed at or rushed. $)
+   would-be-between value) needs bl.nextwit1a/bl.nextwit2 above -- see
+   their own comments for the specific, closely-investigated (2026-09-08)
+   tool-level blocker on those, distinct from the underlying strategy
+   being sound. Left here as a known, explicitly-scoped gap, matching
+   the file's existing unproved-placeholder convention: bl.ty, bl.tyt,
+   bl.atintroc, povrfl, punrfl, pimrfl, pdjrfl. $)
 bl.nextuniq $p |- ( ( ( t_2 e. TIME /\ t_3 e. TIME ) /\
   ( next ( t_1 , t_2 ) /\ next ( t_1 , t_3 ) ) ) -> t_2 = t_3 ) $= ? $.
 
