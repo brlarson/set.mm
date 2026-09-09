@@ -3073,8 +3073,8 @@ df-apar $a |- A. p_x A. r_0 ( ( p_x Location r_0 /\ Atom p_x ) -> AtomicRegion r
   
 $( Parthood implies regional containment. This property is called expansivity. $)
 $( Define expansivity. $)
-df-pec $a |- A. p_x A. p_y A. r_1 A. r_2 ( 
-  ( p_x Location r_1 /\ p_y Location r_2 /\ p_x PartOf p_y ) -> r_1 RegionContainment r_2 ) $.
+df-pec $a |- A. p_x A. p_y A. r_1 A. r_2 (
+  ( p_x Location r_1 /\ p_y Location r_2 /\ p_x PartOf p_y ) -> r_2 RegionContainment r_1 ) $.
 
 $( Regions overlap only if one contains the other. This property is called
 no interpenetration. $)
