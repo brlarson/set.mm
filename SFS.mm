@@ -3227,9 +3227,6 @@ $( Define Allen's interval precedes.  Re-expressed via effectiveEnd
    (2026-08-27), not death directly -- see df-effectiveend above. $)
 df-precedes $a |- precedes ( A , B ) <-> ( effectiveEnd ( A ) b~< birth ( B ) ) $.
 
-$( Define Allen's interval meets.  Re-expressed via effectiveEnd. $)
-df-meets $a |- meets ( A , B ) <-> ( effectiveEnd ( A ) = birth ( B ) ) $.
-
 $( Define Allen's interval overlaps.  Re-expressed via effectiveEnd. $)
 df-overlaps $a |- overlaps ( A , B ) <-> ( birth ( B ) b~< effectiveEnd ( A ) ) $.
 
@@ -3242,6 +3239,20 @@ $( openRight is constant $)
 $c openRight $.
 $( openRight(A) is wff $)
 wopenright $a wff openRight ( A ) $.
+
+$( Define Allen's interval meets.  Re-expressed via effectiveEnd; also fixed
+   2026-09-22 to add the two boundary conjuncts Allen.kerml's body and doc
+   comment always carried but its own @Assert formula was missing, same
+   reasoning as df-starts below -- meets was simply left out of the batch that
+   fixed starts/finishes/coincident.  Stated here rather than beside
+   df-precedes/df-overlaps only because it now uses openLeft/openRight, which
+   are not declared until just above.  The added conjunct is the De Morgan dual
+   of df-nearlymeets's ( openRight ( A ) \/ openLeft ( B ) ); without it the two
+   relations overlap on birth(B) = effectiveEnd(A) instead of partitioning it,
+   and df-nearlymeets's own comment ("A and B don't meet, but ...") is false. $)
+df-meets $a |- meets ( A , B ) <->
+( ( effectiveEnd ( A ) = birth ( B ) ) /\
+( -. openRight ( A ) /\ -. openLeft ( B ) ) ) $.
 
 $( Define Allen's interval starts.  Re-expressed via effectiveEnd (2026-08-27);
    also fixed the same day to add the openLeft agreement conjunct
