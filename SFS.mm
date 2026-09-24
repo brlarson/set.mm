@@ -3683,6 +3683,12 @@ $c TrueItem FalseItem $.
 ctrueitem  $a class TrueItem  $.
 cfalseitem $a class FalseItem $.
 
+$( TrueItem and FalseItem are distinct.  Without this they could coincide, and
+   GetChangeToTrue and GetChangeToFalse would constrain their output the same way.
+   Lean4SFS proves the corresponding law (BoolItems.trueItem_ne_falseItem) from
+   a model where Item is nonempty. $)
+ax-truefalse $a |- -. TrueItem = FalseItem $.
+
 $( Get is constant $)
 $c Get $.
 $( Get(occ,feat,inst) is class $)
