@@ -3089,18 +3089,26 @@ $( Define no interpenetration. $)
 df-rni $a |- A. r_1 A. r_2 ( r_1 RegionOverlap r_2 -> 
   ( r_1 RegionContainment r_2 \/ r_2 RegionContainment r_1 ) ) $.
 
-$( Define region interior RI. $)
-df-ri $a |- r_1 RegionInterior r_2 <-> E. s_0 A. p_0 ( p_0 InRegion r_1 ->
-  ( p_0 InRegion r_2 /\ -. p_0 OnSurface s_0 /\ s_0 RegionSurface r_2 ) ) $.
+$( Define region interior RI: r_1 is the interior of r_2 when its points are
+   exactly the points of r_2 not on r_2's surface.  Was df-ri, which asked only
+   that r_1's points be among them (some region inside the interior, not the
+   interior); relabeled and restated 2026-09-24 to match the book's df-rint. $)
+df-rint $a |- r_1 RegionInterior r_2 <-> A. p_0 ( p_0 InRegion r_1 <->
+  ( p_0 InRegion r_2 /\ A. s_0 ( s_0 RegionSurface r_2 -> -. p_0 OnSurface s_0 ) ) ) $.
 
-$( Define region surface RS. $)
-df-rs $a |- s_0 RegionSurface r_0 <-> E. r_1 A. p_0 ( p_0 OnSurface s_0 ->
-  ( p_0 InRegion r_0 /\ -. p_0 InRegion r_1 /\ r_1 RegionSurface r_0 ) ) $. 
+$( Define region surface RS: the points of r_0 adjacent to a point not in r_0.
+   Was df-rs, whose body asked only that each surface point be in r_0 and
+   outside some region r_1, and carried a malformed conjunct
+   ( r_1 RegionSurface r_0, a region in a surface's place ); relabeled and
+   restated 2026-09-24 to match the book's df-rsurf. $)
+df-rsurf $a |- s_0 RegionSurface r_0 <-> A. p_0 ( p_0 OnSurface s_0 <->
+  ( p_0 InRegion r_0 /\ E. p_1 ( p_0 Adjacent p_1 /\ -. p_1 InRegion r_0 ) ) ) $.
 
 $( Define region film RF: the points not in r_0 but adjacent to a point on its
-   surface -- the layer just outside r_0.  Was df-rf, "the surface of the
-   interior of r_0", which put the film inside r_0 under the book's df-rint;
-   relabeled and restated 2026-09-24 to match the book's df-rfilm. $)
+   surface -- the layer just outside r_0.  Was df-rf, the surface of a region
+   whose interior is r_0: also outside r_0, but characterized through
+   RegionInterior rather than by adjacency, as the book's df-rfilm is.
+   Relabeled and restated 2026-09-24 to match df-rfilm. $)
 df-rfilm $a |- s_0 RegionFilm r_0 <-> A. p_0 ( p_0 OnSurface s_0 <->
   ( -. p_0 InRegion r_0 /\ E. p_1 E. s_1
     ( s_1 RegionSurface r_0 /\ p_1 OnSurface s_1 /\ p_0 Adjacent p_1 ) ) ) $.
