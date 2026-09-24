@@ -3093,10 +3093,13 @@ df-rs $a |- s_0 RegionSurface r_0 <-> E. r_1 A. p_0 ( p_0 OnSurface s_0 ->
 $( Define region film RF. $)
 df-rf $a |- s_0 RegionFilm r_0 <-> E. r_1 ( r_0 RegionInterior r_1 /\ s_0 RegionSurface r_1 ) $.
 
-$( Define externally-connected regions EC. $)
-df-exc $a |- r_1 ExternallyConnected r_2 <-> E. s_1 E. s_2 E. p_0
-  ( ( s_1 RegionSurface r_1 /\ s_2 RegionSurface r_2 ) /\
-    ( p_0 OnSurface s_1 /\ p_0 OnSurface s_2 ) ) $.
+$( Define externally-connected regions EC: RCC's EC -- r_1 and r_2 do not
+   overlap, yet some point of r_1's film lies in r_2.  Was df-exc, whose body
+   (a point on both regions' surfaces, no non-overlap conjunct) also held of
+   regions that overlap elsewhere; relabeled and restated 2026-09-24 to match
+   the book's df-rec. $)
+df-rec $a |- r_1 ExternallyConnected r_2 <-> ( -. r_1 RegionOverlap r_2 /\
+  E. s_1 E. p_0 ( s_1 RegionFilm r_1 /\ ( p_0 OnSurface s_1 /\ p_0 InRegion r_2 ) ) ) $.
 
 $( Define film-connected regions FC. $)
 df-flmc $a |- r_1 FilmConnected r_2 <-> E. s_1 E. s_2 E. p_0
