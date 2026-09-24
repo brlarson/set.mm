@@ -3121,6 +3121,19 @@ $( Define externally-connected regions EC: RCC's EC -- r_1 and r_2 do not
 df-rec $a |- r_1 ExternallyConnected r_2 <-> ( -. r_1 RegionOverlap r_2 /\
   E. s_1 E. p_0 ( s_1 RegionFilm r_1 /\ ( p_0 OnSurface s_1 /\ p_0 InRegion r_2 ) ) ) $.
 
+$( Some two regions are externally connected: they touch without overlapping.
+   Without this every surface, film, and EC pair may be empty.  Lean4SFS proves it
+   consistent with the other region and surface laws (spatial_exists, by two
+   single-point regions whose points are adjacent). $)
+ax-ecne $a |- E. r_1 E. r_2 r_1 ExternallyConnected r_2 $.
+
+$( Surfaces are not all empty: some region has a surface with a point on it.
+   From ax-ecne: by df-rec, some point p_0 is on the film s_1 of r_1; by df-rfilm,
+   p_0 is adjacent to a point p_1 on a surface of r_1.  Proved in Lean4SFS
+   (exists_surface_point); the Metamath proof is not yet written. $)
+surfne $p |- E. r_0 E. s_0 E. p_0 ( s_0 RegionSurface r_0 /\ p_0 OnSurface s_0 )
+  $= ? $.
+
 $( Define film-connected regions FC. $)
 df-flmc $a |- r_1 FilmConnected r_2 <-> E. s_1 E. s_2 E. p_0
   ( ( s_1 RegionFilm r_1 /\ s_2 RegionFilm r_2 ) /\
