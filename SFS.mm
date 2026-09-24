@@ -3033,6 +3033,13 @@ $c OnSurface $.
 $( p_0 OnSurface s_0 is wff $)
 won $a wff p_0 OnSurface s_0 $.
 
+$( Adjacent is a constant: infinitesimal closeness of points, the book's
+   df-adjp (p_1 is in Adj(p_0)).  Primitive, with no further law; added
+   2026-09-24 for df-rfilm. $)
+$c Adjacent $.
+$( p_0 Adjacent p_1 is wff $)
+wadj $a wff p_0 Adjacent p_1 $.
+
 $( RegionFilm is constant $)
 $c RegionFilm $.
 $( s_0 RegionFilm r_0 is wff $)
@@ -3090,8 +3097,13 @@ $( Define region surface RS. $)
 df-rs $a |- s_0 RegionSurface r_0 <-> E. r_1 A. p_0 ( p_0 OnSurface s_0 ->
   ( p_0 InRegion r_0 /\ -. p_0 InRegion r_1 /\ r_1 RegionSurface r_0 ) ) $. 
 
-$( Define region film RF. $)
-df-rf $a |- s_0 RegionFilm r_0 <-> E. r_1 ( r_0 RegionInterior r_1 /\ s_0 RegionSurface r_1 ) $.
+$( Define region film RF: the points not in r_0 but adjacent to a point on its
+   surface -- the layer just outside r_0.  Was df-rf, "the surface of the
+   interior of r_0", which put the film inside r_0 under the book's df-rint;
+   relabeled and restated 2026-09-24 to match the book's df-rfilm. $)
+df-rfilm $a |- s_0 RegionFilm r_0 <-> A. p_0 ( p_0 OnSurface s_0 <->
+  ( -. p_0 InRegion r_0 /\ E. p_1 E. s_1
+    ( s_1 RegionSurface r_0 /\ p_1 OnSurface s_1 /\ p_0 Adjacent p_1 ) ) ) $.
 
 $( Define externally-connected regions EC: RCC's EC -- r_1 and r_2 do not
    overlap, yet some point of r_1's film lies in r_2.  Was df-exc, whose body
