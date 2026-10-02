@@ -4200,4 +4200,106 @@ df-bl.timeof $a |- ( timeof ( ph ) = t_1 <->
   ( boldI [[ ph , t_1 ]] /\
     A. tv e. ( 0 [,) t_1 ) -. boldI [[ ph , tv ]] ) ) $.
 
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Connections
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( isConnectionEnd A: the Usage A is a connection end of a ConnectionDefinition
+   or ConnectionUsage (SysML 7.13.1). $)
+$c isConnectionEnd $.
+wisconnend $a wff isConnectionEnd A $.
+
+$( isBinding ( A , C , D ): the Usage A is a binding of features C and D
+   (bind C = D, SysML 7.13.3). $)
+$c isBinding $.
+wisbinding $a wff isBinding ( A , C , D ) $.
+
+$( initialValue ( A , C ): the Usage A has the initial feature value C
+   (A := C, SysML 7.13.4). $)
+$c initialValue $.
+winitval $a wff initialValue ( A , C ) $.
+
+$( boundValue ( A , C ): the Usage A has the bound (fixed, non-default)
+   feature value C (A = C, SysML 7.13.4), C being the result of the value
+   expression. $)
+$c boundValue $.
+wboundvalue $a wff boundValue ( A , C ) $.
+
+$( Define a bound feature value as a binding: KerML's
+   checkFeatureValueBindingConnector requires a feature with a non-default,
+   non-initial value to own a BindingConnector, featured by the feature's own
+   featuring types, between the feature and its value expression's result.
+   So a bound value is a SelfLink binding, identity, as any binding is; it is
+   the binding of A to C whose featuring occurrences are A's own, which is
+   isBinding ( A , A , C ). $)
+df-boundvalue $a |- ( boundValue ( A , C ) <-> isBinding ( A , A , C ) ) $.
+
+${
+  $d x y z A $.  $d x y z B $.  $d x y z C $.  $d x y z D $.
+  $( Semantics of a SysML connection end (Supplemental-Semantics
+     Chapter/Connections.tex, connection-end; SysML 7.13.1): the things a
+     connection x connects, the values of its end A, are the same at every
+     instant of its lifetime.  A real theorem, not an axiom, for the same
+     reason as abstract-def. $)
+  connection-end $p |- ( ( <. Feature , A , B >. e. Design /\
+    isConnectionEnd A ) -> A. x e. dom B A. y e. life ( x ) A. z e. life ( x )
+      Get ( x , A , y ) = Get ( x , A , z ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv cA vy cv cget vx cv cA vz cv cget
+    wceq vz vx cv clife wral vy vx cv clife wral vx cB cdm wral cA
+    wisconnend cfeature cA cB cotp cDesign wcel vx cv cA vy cv cget vx cv cA
+    vz cv cget wceq vz vx cv clife wral vy vx cv clife wral vx cB cdm wral
+    cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA
+    cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir
+    pm2.21i adantr $.
+
+  $( Semantics of a SysML binding (Supplemental-Semantics
+     Chapter/Connections.tex, binding-usage; SysML 7.13.3): a binding A of
+     features C and D of an occurrence x keeps their values the same at every
+     instant of its lifetime.  A real theorem, not an axiom, for the same
+     reason as abstract-def. $)
+  binding-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+    isBinding ( A , C , D ) ) -> A. x e. dom B A. y e. life ( x )
+      Get ( x , C , y ) = Get ( x , D , y ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv cC vy cv cget vx cv cD vy cv cget
+    wceq vy vx cv clife wral vx cB cdm wral cA cC cD wisbinding cfeature cA
+    cB cotp cDesign wcel vx cv cC vy cv cget vx cv cD vy cv cget wceq vy vx
+    cv clife wral vx cB cdm wral cfeature cA cB cotp cDesign wcel cfeature
+    cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0 cfeature cA cB
+    cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+  $( Semantics of a SysML initial feature value (Supplemental-Semantics
+     Chapter/Connections.tex, initial-value; SysML 7.13.4): a feature A with
+     initial value C has the value of C at the start of the lifetime of each
+     featuring occurrence x, and may change after.  It is the binding of
+     bound-value restricted to birth ( x ), since KerML's
+     checkFeatureValueBindingConnector features an initial value's binding by
+     that.startShot.  A real theorem, not an axiom, for the same reason as
+     abstract-def. $)
+  initial-value $p |- ( ( <. Feature , A , B >. e. Design /\
+    initialValue ( A , C ) ) -> A. x e. dom B
+      Get ( x , A , birth ( x ) ) = Get ( x , C , birth ( x ) ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv cA vx cv cbirth cget vx cv cC vx
+    cv cbirth cget wceq vx cB cdm wral cA cC winitval cfeature cA cB cotp
+    cDesign wcel vx cv cA vx cv cbirth cget vx cv cC vx cv cbirth cget wceq
+    vx cB cdm wral cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0
+    wcel cfeature cA cB cotp noel cDesign c0 cfeature cA cB cotp df-design
+    eleq2i mtbir pm2.21i adantr $.
+  $( Semantics of a SysML bound feature value (Supplemental-Semantics
+     Chapter/Connections.tex, bound-value; SysML 7.13.4): a feature A with bound
+     value C has the value of C at every instant of the lifetime of each
+     featuring occurrence x.  Derived, not vacuous: binding-usage applied to
+     the binding df-boundvalue makes of the feature value. $)
+  bound-value $p |- ( ( <. Feature , A , B >. e. Design /\
+    boundValue ( A , C ) ) -> A. x e. dom B A. y e. life ( x )
+      Get ( x , A , y ) = Get ( x , C , y ) ) $=
+    cfeature cA cB cotp cDesign wcel cA cC wboundvalue wa cfeature cA cB
+    cotp cDesign wcel cA cA cC wisbinding wa vx cv cA vy cv cget vx cv cC vy
+    cv cget wceq vy vx cv clife wral vx cB cdm wral cA cC wboundvalue cA cA
+    cC wisbinding cfeature cA cB cotp cDesign wcel cA cC wboundvalue cA cA
+    cC wisbinding cA cC df-boundvalue biimpi anim2i vx vy cA cB cA cC
+    binding-usage syl $.
+$}
+
 $( ******************* End of Supplemental Formal Semantics ******************* $)
