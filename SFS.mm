@@ -3672,6 +3672,74 @@ df-types $p |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Definition and Usage
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( Classifier and Feature, two of df-kind's element kinds, as classes, so they
+   can be the kind of a df-rep triple ` <. k , id , C >. ` in Design, as Type
+   is.  A SysML Definition is a Classifier and a SysML Usage is a Feature
+   (SysML 8.4.2). $)
+cclassifier $a class Classifier $.
+cfeature $a class Feature $.
+
+$( isAbstract A: the Definition or Usage A is declared abstract (KerML
+   Type::isAbstract, SysML 7.6.2-7.6.3). $)
+$c isAbstract $.
+wisabstract $a wff isAbstract A $.
+
+$( A Specializes B: A directly or indirectly specializes B, by
+   subclassification, feature typing, subsetting, or redefinition (book
+   df-specializes). $)
+$c Specializes $.
+wspecializes $a wff A Specializes B $.
+
+${
+  $d x y z A $.  $d x y z B $.
+  $( Semantics of an abstract SysML Definition (Supplemental-Semantics
+     Chapter/DefinitionAndUsage.tex, abstract-def; SysML 7.6.2): every instance
+     of an abstract Definition A, whose extent is B, is an instance of some
+     concrete (not abstract) Definition, or a value of some concrete Usage,
+     that directly or indirectly specializes A.  A Definition's extent z is a
+     set; a Usage's z is a relation, its values ` ran z `.  A real theorem, not
+     an axiom, for the same reason as df-type: with Design = (/) (df-design),
+     the antecedent is never satisfiable. $)
+  abstract-def $p |- ( ( <. Classifier , A , B >. e. Design /\ isAbstract A ) ->
+    A. x e. B ( E. y E. z ( ( <. Classifier , y , z >. e. Design /\
+      -. isAbstract y /\ y Specializes A ) /\ x e. z ) \/
+    E. y E. z ( ( <. Feature , y , z >. e. Design /\ -. isAbstract y /\
+      y Specializes A ) /\ x e. ran z ) ) ) $=
+    cclassifier cA cB cotp cDesign wcel cclassifier vy cv vz cv cotp cDesign
+    wcel vy cv wisabstract wn vy cv cA wspecializes w3a vx vz wel wa vz wex
+    vy wex cfeature vy cv vz cv cotp cDesign wcel vy cv wisabstract wn vy cv
+    cA wspecializes w3a vx cv vz cv crn wcel wa vz wex vy wex wo vx cB wral
+    cA wisabstract cclassifier cA cB cotp cDesign wcel cclassifier vy cv vz
+    cv cotp cDesign wcel vy cv wisabstract wn vy cv cA wspecializes w3a vx
+    vz wel wa vz wex vy wex cfeature vy cv vz cv cotp cDesign wcel vy cv
+    wisabstract wn vy cv cA wspecializes w3a vx cv vz cv crn wcel wa vz wex
+    vy wex wo vx cB wral cclassifier cA cB cotp cDesign wcel cclassifier cA
+    cB cotp c0 wcel cclassifier cA cB cotp noel cDesign c0 cclassifier cA cB
+    cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+  $( Semantics of an abstract SysML Usage (Supplemental-Semantics
+     Chapter/DefinitionAndUsage.tex, abstract-usage; SysML 7.6.3): every value
+     pair of an abstract Usage A, whose relation is B, is a value pair of some
+     concrete Usage that directly or indirectly subsets or redefines A.  A real
+     theorem, not an axiom, for the same reason as abstract-def. $)
+  abstract-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isAbstract A ) ->
+    A. x e. B E. y E. z ( ( <. Feature , y , z >. e. Design /\
+      -. isAbstract y /\ y Specializes A ) /\ x e. z ) ) $=
+    cfeature cA cB cotp cDesign wcel cfeature vy cv vz cv cotp cDesign wcel
+    vy cv wisabstract wn vy cv cA wspecializes w3a vx vz wel wa vz wex vy
+    wex vx cB wral cA wisabstract cfeature cA cB cotp cDesign wcel cfeature
+    vy cv vz cv cotp cDesign wcel vy cv wisabstract wn vy cv cA wspecializes
+    w3a vx vz wel wa vz wex vy wex vx cB wral cfeature cA cB cotp cDesign
+    wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0
+    cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+$}
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   Variable Feature Access
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 $)
