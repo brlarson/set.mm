@@ -3672,6 +3672,39 @@ df-types $p |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  KerML Data Type
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( SV: the class of scalar values, the values of the ScalarValues library's
+   data types (Supplemental-Semantics Chapter/KernelSemanticsChapter.tex
+   sec 3.2.1, df-scalarvalues).  Left a primitive here. $)
+$c SV $.
+csv $a class SV $.
+
+$( VV: the class of vector values, the values of the VectorValues library's
+   data types (book sec 3.2.2).  Left a primitive here. $)
+$c VV $.
+cvectorv $a class VV $.
+
+$( CL: the class of collections, the values of the Collections library's data
+   types, whose elements are data values (book sec 3.2.3, where it is written
+   C; here CL, since C is already a class variable).  Left a primitive here. $)
+$c CL $.
+ccollv $a class CL $.
+
+$( DT: the class of data values, the values of KerML DataTypes (book sec 3.2,
+   KerML 8.4.4.2). $)
+$c DT $.
+cdatatype $a class DT $.
+
+$( Define the class of data values: scalar values, vector values, and
+   collections (book df-datatype).  A DataType has no existence in space or
+   time; its values are abstract. $)
+df-datatype $a |- DT = ( ( SV u. VV ) u. CL ) $.
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   SysML Definition and Usage
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 $)
@@ -3784,6 +3817,44 @@ ${
     cfeature cA cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i
     mtbir pm2.21i adantr $.
 $}
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Attributes
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( DataType, one of df-kind's element kinds, as a class, so it can be the kind
+   of a df-rep triple in Design.  A SysML AttributeDefinition is a DataType
+   (SysML 8.4.3.1). $)
+cdatatypek $a class DataType $.
+
+$( isAttribute A: the Usage A is an AttributeUsage, a Usage defined only by
+   DataTypes (SysML 8.3.7.3). $)
+$c isAttribute $.
+wisattribute $a wff isAttribute A $.
+
+$( Semantics of a SysML attribute definition (Supplemental-Semantics
+   Chapter/Attributes.tex, attribute-def; SysML 8.4.3.1): an
+   AttributeDefinition A is a DataType, and the extent B of a DataType is a
+   class of data values (df-datatype).  A real theorem, not an axiom, for the
+   same reason as df-type: with Design = (/) (df-design), the antecedent is
+   never satisfiable. $)
+attribute-def $p |- ( <. DataType , A , B >. e. Design -> B C_ DT ) $=
+  cdatatypek cA cB cotp cDesign wcel cB cdatatype wss cdatatypek cA cB cotp
+  cDesign wcel cdatatypek cA cB cotp c0 wcel cdatatypek cA cB cotp noel
+  cDesign c0 cdatatypek cA cB cotp df-design eleq2i mtbir pm2.21i $.
+
+$( Semantics of a SysML attribute usage (Supplemental-Semantics
+   Chapter/Attributes.tex, attribute-usage; SysML 8.4.3.2): the values
+   ` ran B ` of an AttributeUsage A, whose relation is B, are data values.  A
+   real theorem, not an axiom, for the same reason as attribute-def. $)
+attribute-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
+  ran B C_ DT ) $=
+  cfeature cA cB cotp cDesign wcel cB crn cdatatype wss cA wisattribute
+  cfeature cA cB cotp cDesign wcel cB crn cdatatype wss cfeature cA cB cotp
+  cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign
+  c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
