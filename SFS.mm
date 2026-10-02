@@ -3856,6 +3856,45 @@ attribute-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
   cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign
   c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
 
+$( A Design-membership antecedent implies anything: with Design = (/)
+   (df-design), no triple is a member of it.  Factors out the proof shared by
+   the SysML laws, each of which has such an antecedent. $)
+designant $p |- ( ( <. A , B , C >. e. Design /\ ph ) -> ps ) $=
+  cA cB cC cotp cDesign wcel wps wph cA cB cC cotp cDesign wcel wps cA cB cC
+  cotp cDesign wcel cA cB cC cotp c0 wcel cA cB cC cotp noel cDesign c0 cA cB
+  cC cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Enumerations
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( isEnumeration A: the AttributeDefinition A is an EnumerationDefinition,
+   a variation whose variants are its enumerated values (SysML 8.3.8.2). $)
+$c isEnumeration $.
+wisenumeration $a wff isEnumeration A $.
+
+${
+  $d u w x y z A $.  $d u w x y z B $.
+  $( Semantics of a SysML enumeration definition (Supplemental-Semantics
+     Chapter/Enumerations.tex, enumeration-def; SysML 8.4.4, 8.3.8.2): the
+     instances B of an enumeration definition A, a DataType, are exactly the
+     values of its enumerated values y (its variants, as in variation-def);
+     each enumerated value has a single fixed value, ` ran z = { x } `; and
+     distinct enumerated values have distinct values.  So an enumeration with
+     n enumerated values has exactly n instances.  A real theorem, not an
+     axiom, for the same reason as abstract-def. $)
+  enumeration-def $p |- ( ( <. DataType , A , B >. e. Design /\ isEnumeration A )
+    -> ( B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\
+      y VariantOf A ) /\ x e. ran z ) } /\
+    A. y A. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) ->
+      E. x ran z = { x } ) /\
+    A. y A. z A. u A. w ( ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
+      ( <. Feature , u , w >. e. Design /\ u VariantOf A ) /\ -. y = u ) ->
+      -. ran z = ran w ) ) ) $= ? $.
+$}
+
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   Variable Feature Access
