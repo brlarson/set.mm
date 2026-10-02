@@ -3738,6 +3738,53 @@ ${
     cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
 $}
 
+$( isVariation A: the Definition or Usage A is declared a variation, a
+   variation point (SysML 7.6.7). $)
+$c isVariation $.
+wisvariation $a wff isVariation A $.
+
+$( A VariantOf B: the Usage A is a variant of the variation B, an owned member
+   of B by VariantMembership (SysML 8.3.6.5). $)
+$c VariantOf $.
+wvariantof $a wff A VariantOf B $.
+
+${
+  $d x y z A $.  $d x y z B $.
+  $( Semantics of a SysML variation Definition (Supplemental-Semantics
+     Chapter/DefinitionAndUsage.tex, variation-def; SysML 8.4.2.3): the
+     instances of a variation Definition A, whose extent is B, are exactly the
+     values of its variants.  A variant y is a Usage, whose relation z has
+     values ` ran z `.  SysML 8.4.2.3 requires this restriction of a conformant
+     tool, but notes the Systems Model Library does not formally capture it.
+     A real theorem, not an axiom, for the same reason as abstract-def. $)
+  variation-def $p |- ( ( <. Classifier , A , B >. e. Design /\ isVariation A ) ->
+    B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
+      x e. ran z ) } ) $=
+    cclassifier cA cB cotp cDesign wcel cB cfeature vy cv vz cv cotp cDesign
+    wcel vy cv cA wvariantof wa vx cv vz cv crn wcel wa vz wex vy wex vx cab
+    wceq cA wisvariation cclassifier cA cB cotp cDesign wcel cB cfeature vy
+    cv vz cv cotp cDesign wcel vy cv cA wvariantof wa vx cv vz cv crn wcel
+    wa vz wex vy wex vx cab wceq cclassifier cA cB cotp cDesign wcel
+    cclassifier cA cB cotp c0 wcel cclassifier cA cB cotp noel cDesign c0
+    cclassifier cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+  $( Semantics of a SysML variation Usage (Supplemental-Semantics
+     Chapter/DefinitionAndUsage.tex, variation-usage; SysML 8.4.2.3): the value
+     pairs of a variation Usage A, whose relation is B, are exactly the value
+     pairs of its variants.  A real theorem, not an axiom, for the same reason
+     as abstract-def. $)
+  variation-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isVariation A ) ->
+    B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
+      x e. z ) } ) $=
+    cfeature cA cB cotp cDesign wcel cB cfeature vy cv vz cv cotp cDesign
+    wcel vy cv cA wvariantof wa vx vz wel wa vz wex vy wex vx cab wceq cA
+    wisvariation cfeature cA cB cotp cDesign wcel cB cfeature vy cv vz cv
+    cotp cDesign wcel vy cv cA wvariantof wa vx vz wel wa vz wex vy wex vx
+    cab wceq cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel
+    cfeature cA cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i
+    mtbir pm2.21i adantr $.
+$}
+
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   Variable Feature Access
