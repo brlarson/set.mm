@@ -3996,6 +3996,36 @@ $}
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Ports
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( isOwnedPort A: the PortUsage A is owned by a part definition or usage
+   (ownedPorts), or nested in a port definition or usage (subports)
+   (SysML 8.4.8.2). $)
+$c isOwnedPort $.
+wisownedport $a wff isOwnedPort A $.
+
+${
+  $d x y A $.  $d x y B $.
+  $( Semantics of a SysML port usage owned by a part or nested in a port
+     (Supplemental-Semantics Chapter/Ports.tex, port-usage; SysML 8.4.8.2):
+     each port y of an owning occurrence x happens during x, as the standard
+     library's subsetting of timeEnclosedOccurrences by ownedPorts and
+     subports requires.  A real theorem, not an axiom, for the same reason as
+     abstract-def. $)
+  port-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isOwnedPort A ) ->
+    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy cv vx cv
+    wduring wi vy wal vx wal cA wisownedport cfeature cA cB cotp cDesign
+    wcel vx cv vy cv cop cB wcel vy cv vx cv wduring wi vy wal vx wal
+    cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA
+    cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir
+    pm2.21i adantr $.
+$}
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   Variable Feature Access
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 $)
