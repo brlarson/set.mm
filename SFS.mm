@@ -3897,6 +3897,105 @@ $}
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Occurrences
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( Class, one of df-kind's element kinds, as a class, so it can be the kind of
+   a df-rep triple in Design.  A SysML OccurrenceDefinition is a Class
+   (SysML 8.4.5.1). $)
+cclassk $a class Class $.
+
+$( isIndividual A: the OccurrenceDefinition A is declared individual
+   (SysML 7.9.4). $)
+$c isIndividual $.
+wisindividual $a wff isIndividual A $.
+
+$( isTimeslice A: the OccurrenceUsage A is declared timeslice (SysML
+   7.9.3). $)
+$c isTimeslice $.
+wistimeslice $a wff isTimeslice A $.
+
+$( isSnapshot A: the OccurrenceUsage A is declared snapshot (SysML 7.9.3). $)
+$c isSnapshot $.
+wissnapshot $a wff isSnapshot A $.
+
+$( isEvent A: the EventOccurrenceUsage A is owned by an OccurrenceDefinition
+   or OccurrenceUsage (SysML 8.4.5.3). $)
+$c isEvent $.
+wisevent $a wff isEvent A $.
+
+$( sliceInterval ( A , B ): the interval of the lifetime of occurrence B over
+   which the time slice usage A considers it. $)
+$c sliceInterval $.
+csliceint $a class sliceInterval ( A , B ) $.
+
+$( shotInstant ( A , B ): the instant of the lifetime of occurrence B at which
+   the snapshot usage A considers it. $)
+$c shotInstant $.
+cshotinst $a class shotInstant ( A , B ) $.
+
+${
+  $d x y A $.  $d x y B $.
+  $( Semantics of a SysML individual occurrence definition (Supplemental-
+     Semantics Chapter/Occurrences.tex, individual-def; SysML 7.9.4, 8.4.5.1):
+     with no temporal portions in SFS, the extent B of an individual
+     definition A has at most one occurrence, the individual, and none in a
+     counterfactual model.  A real theorem, not an axiom, for the same reason
+     as abstract-def. $)
+  individual-def $p |- ( ( <. Class , A , B >. e. Design /\ isIndividual A ) ->
+    A. x e. B A. y e. B x = y ) $=
+    cclassk cA cB cotp cDesign wcel vx vy weq vy cB wral vx cB wral cA
+    wisindividual cclassk cA cB cotp cDesign wcel vx vy weq vy cB wral vx cB
+    wral cclassk cA cB cotp cDesign wcel cclassk cA cB cotp c0 wcel cclassk
+    cA cB cotp noel cDesign c0 cclassk cA cB cotp df-design eleq2i mtbir
+    pm2.21i adantr $.
+
+  $( Semantics of a SysML time slice usage (Supplemental-Semantics
+     Chapter/Occurrences.tex, timeslice-usage; SysML 7.9.3): with no temporal
+     parts in SFS, a time slice A of an occurrence x is x itself, considered
+     over an interval during x.  A real theorem, not an axiom, for the same
+     reason as abstract-def. $)
+  timeslice-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isTimeslice A )
+    -> A. x A. y ( <. x , y >. e. B ->
+      ( y = x /\ during ( sliceInterval ( A , x ) , x ) ) ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
+    cv csliceint vx cv wduring wa wi vy wal vx wal cA wistimeslice cfeature
+    cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx cv
+    csliceint vx cv wduring wa wi vy wal vx wal cfeature cA cB cotp cDesign
+    wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0
+    cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+  $( Semantics of a SysML snapshot usage (Supplemental-Semantics
+     Chapter/Occurrences.tex, snapshot-usage; SysML 7.9.3): a snapshot A of an
+     occurrence x is x itself, considered at an instant in its lifetime.  A
+     real theorem, not an axiom, for the same reason as abstract-def. $)
+  snapshot-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isSnapshot A )
+    -> A. x A. y ( <. x , y >. e. B ->
+      ( y = x /\ shotInstant ( A , x ) e. life ( x ) ) ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
+    cv cshotinst vx cv clife wcel wa wi vy wal vx wal cA wissnapshot
+    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
+    cv cshotinst vx cv clife wcel wa wi vy wal vx wal cfeature cA cB cotp
+    cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel
+    cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+
+  $( Semantics of a SysML event occurrence usage owned by an occurrence
+     (Supplemental-Semantics Chapter/Occurrences.tex, event-usage; SysML
+     8.4.5.3): each event y of a featuring occurrence x happens during x, as
+     timeEnclosedOccurrences requires.  A real theorem, not an axiom, for the
+     same reason as abstract-def. $)
+  event-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isEvent A ) ->
+    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $=
+    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy cv vx cv
+    wduring wi vy wal vx wal cA wisevent cfeature cA cB cotp cDesign wcel vx
+    cv vy cv cop cB wcel vy cv vx cv wduring wi vy wal vx wal cfeature cA cB
+    cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel
+    cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+$}
+
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   Variable Feature Access
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 $)
