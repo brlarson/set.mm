@@ -4302,4 +4302,67 @@ ${
     binding-usage syl $.
 $}
 
+$(
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  SysML Allocations
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+$)
+
+$( allocatedTo: the feature Tangibility::Virtual::allocatedTo, the physical thing
+   a virtual thing is allocated to, which hosts or performs it. $)
+$c allocatedTo $.
+callocatedto $a class allocatedTo $.
+
+$( delegatedTo: the feature Tangibility::Virtual::delegatedTo, the virtual thing
+   a virtual thing delegates its existence to. $)
+$c delegatedTo $.
+cdelegatedto $a class delegatedTo $.
+
+$( isVPAllocation A: the AllocationUsage A is defined by
+   Allocations::VPAllocation, which specializes Tangibility::VPAllocation, so
+   its source is virtual and its target physical. $)
+$c isVPAllocation $.
+wisvpalloc $a wff isVPAllocation A $.
+
+$( isVVDelegation A: the AllocationUsage A is defined by
+   Allocations::VVDelegation, which specializes Tangibility::VVDelegation, so
+   its source and target are both virtual. $)
+$c isVVDelegation $.
+wisvvdeleg $a wff isVVDelegation A $.
+
+$( allocates ( A , C , D ): the allocation A allocates its source C to its
+   target D. $)
+$c allocates $.
+wallocates $a wff allocates ( A , C , D ) $.
+
+${
+  $d u w x y z A $.  $d u w x y z B $.
+  $( Semantics of a SysML VPAllocation (Supplemental-Semantics
+     Chapter/Allocations.tex, vpallocation-usage; SysML 7.15): while an
+     allocation y defined by VPAllocation lasts, its virtual source u is
+     allocated, in Tangibility's sense, to its physical target w, so is located
+     where w is.  A real theorem, not an axiom, for the same reason as
+     abstract-def. $)
+  vpallocation-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+    isVPAllocation A ) -> A. x A. y ( <. x , y >. e. B ->
+      A. u A. w ( allocates ( y , u , w ) ->
+        A. z e. life ( y ) Get ( u , allocatedTo , z ) = { w } ) ) ) $=
+    cA wisvpalloc vx cv vy cv cop cB wcel vy cv vu cv vw cv wallocates vu cv
+    callocatedto vz cv cget vw cv csn wceq vz vy cv clife wral wi vw wal vu
+    wal wi vy wal vx wal cfeature cA cB designant $.
+
+  $( Semantics of a SysML VVDelegation (Supplemental-Semantics
+     Chapter/Allocations.tex, vvdelegation-usage; SysML 7.15): while an
+     allocation y defined by VVDelegation lasts, its virtual source u delegates
+     its existence to its virtual target w, so is located wherever w is.  A
+     real theorem, not an axiom, for the same reason as abstract-def. $)
+  vvdelegation-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+    isVVDelegation A ) -> A. x A. y ( <. x , y >. e. B ->
+      A. u A. w ( allocates ( y , u , w ) ->
+        A. z e. life ( y ) Get ( u , delegatedTo , z ) = { w } ) ) ) $=
+    cA wisvvdeleg vx cv vy cv cop cB wcel vy cv vu cv vw cv wallocates vu cv
+    cdelegatedto vz cv cget vw cv csn wceq vz vy cv clife wral wi vw wal vu
+    wal wi vy wal vx wal cfeature cA cB designant $.
+$}
+
 $( ******************* End of Supplemental Formal Semantics ******************* $)
