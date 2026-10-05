@@ -3711,24 +3711,24 @@ wspecializes $a wff A Specializes B $.
 ${
   $d x y z A $.  $d x y z B $.
   $( Semantics of an abstract SysML Definition (Supplemental-Semantics
-     Chapter/DefinitionAndUsage.tex, abstract-def; SysML 7.6.2): every instance
+     Chapter/DefinitionAndUsage.tex, df-abstract; SysML 7.6.2): every instance
      of an abstract Definition A, whose extent is B, is an instance of some
      concrete (not abstract) Definition, or a value of some concrete Usage,
      that directly or indirectly specializes A.  A Definition's extent z is a
      set; a Usage's z is a relation, its values ` ran z `.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  abstract-def $a |- ( ( <. Classifier , A , B >. e. Design /\ isAbstract A ) ->
+  df-abstract $a |- ( ( <. Classifier , A , B >. e. Design /\ isAbstract A ) ->
     A. x e. B ( E. y E. z ( ( <. Classifier , y , z >. e. Design /\
       -. isAbstract y /\ y Specializes A ) /\ x e. z ) \/
     E. y E. z ( ( <. Feature , y , z >. e. Design /\ -. isAbstract y /\
       y Specializes A ) /\ x e. ran z ) ) ) $.
 
   $( Semantics of an abstract SysML Usage (Supplemental-Semantics
-     Chapter/DefinitionAndUsage.tex, abstract-usage; SysML 7.6.3): every value
+     Chapter/DefinitionAndUsage.tex, df-abstract-usage; SysML 7.6.3): every value
      pair of an abstract Usage A, whose relation is B, is a value pair of some
      concrete Usage that directly or indirectly subsets or redefines A.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  abstract-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAbstract A ) ->
+  df-abstract-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAbstract A ) ->
     A. x e. B E. y E. z ( ( <. Feature , y , z >. e. Design /\
       -. isAbstract y /\ y Specializes A ) /\ x e. z ) ) $.
 $}
@@ -3746,23 +3746,23 @@ wvariantof $a wff A VariantOf B $.
 ${
   $d x y z A $.  $d x y z B $.
   $( Semantics of a SysML variation Definition (Supplemental-Semantics
-     Chapter/DefinitionAndUsage.tex, variation-def; SysML 8.4.2.3): the
+     Chapter/DefinitionAndUsage.tex, df-variation; SysML 8.4.2.3): the
      instances of a variation Definition A, whose extent is B, are exactly the
      values of its variants.  A variant y is a Usage, whose relation z has
      values ` ran z `.  SysML 8.4.2.3 requires this restriction of a conformant
      tool, but notes the Systems Model Library does not formally capture it.
      An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  variation-def $a |- ( ( <. Classifier , A , B >. e. Design /\ isVariation A ) ->
+  df-variation $a |- ( ( <. Classifier , A , B >. e. Design /\ isVariation A ) ->
     B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
       x e. ran z ) } ) $.
 
   $( Semantics of a SysML variation Usage (Supplemental-Semantics
-     Chapter/DefinitionAndUsage.tex, variation-usage; SysML 8.4.2.3): the value
+     Chapter/DefinitionAndUsage.tex, df-variation-usage; SysML 8.4.2.3): the value
      pairs of a variation Usage A, whose relation is B, are exactly the value
      pairs of its variants.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  variation-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isVariation A ) ->
+  df-variation-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isVariation A ) ->
     B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
       x e. z ) } ) $.
 $}
@@ -3784,17 +3784,17 @@ $c isAttribute $.
 wisattribute $a wff isAttribute A $.
 
 $( Semantics of a SysML attribute definition (Supplemental-Semantics
-   Chapter/Attributes.tex, attribute-def; SysML 8.4.3.1): an
+   Chapter/Attributes.tex, df-attribute; SysML 8.4.3.1): an
    AttributeDefinition A is a DataType, and the extent B of a DataType is a
    class of data values (df-datatype).  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-attribute-def $a |- ( <. DataType , A , B >. e. Design -> B C_ DT ) $.
+df-attribute $a |- ( <. DataType , A , B >. e. Design -> B C_ DT ) $.
 
 $( Semantics of a SysML attribute usage (Supplemental-Semantics
-   Chapter/Attributes.tex, attribute-usage; SysML 8.4.3.2): the values
+   Chapter/Attributes.tex, df-attribute-usage; SysML 8.4.3.2): the values
    ` ran B ` of an AttributeUsage A, whose relation is B, are data values.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-attribute-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
+df-attribute-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
   ran B C_ DT ) $.
 
 $(
@@ -3811,14 +3811,14 @@ wisenumeration $a wff isEnumeration A $.
 ${
   $d u w x y z A $.  $d u w x y z B $.
   $( Semantics of a SysML enumeration definition (Supplemental-Semantics
-     Chapter/Enumerations.tex, enumeration-def; SysML 8.4.4, 8.3.8.2): the
+     Chapter/Enumerations.tex, df-enumeration; SysML 8.4.4, 8.3.8.2): the
      instances B of an enumeration definition A, a DataType, are exactly the
-     values of its enumerated values y (its variants, as in variation-def);
+     values of its enumerated values y (its variants, as in df-variation);
      each enumerated value has a single fixed value, ` ran z = { x } `; and
      distinct enumerated values have distinct values.  So an enumeration with
      n enumerated values has exactly n instances.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  enumeration-def $a |- ( ( <. DataType , A , B >. e. Design /\ isEnumeration A )
+  df-enumeration $a |- ( ( <. DataType , A , B >. e. Design /\ isEnumeration A )
     -> ( B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\
       y VariantOf A ) /\ x e. ran z ) } /\
     A. y A. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) ->
@@ -3871,37 +3871,37 @@ cshotinst $a class shotInstant ( A , B ) $.
 ${
   $d x y A $.  $d x y B $.
   $( Semantics of a SysML individual occurrence definition (Supplemental-
-     Semantics Chapter/Occurrences.tex, individual-def; SysML 7.9.4, 8.4.5.1):
+     Semantics Chapter/Occurrences.tex, df-individual; SysML 7.9.4, 8.4.5.1):
      with no temporal portions in SFS, the extent B of an individual
      definition A has at most one occurrence, the individual, and none in a
      counterfactual model.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  individual-def $a |- ( ( <. Class , A , B >. e. Design /\ isIndividual A ) ->
+  df-individual $a |- ( ( <. Class , A , B >. e. Design /\ isIndividual A ) ->
     A. x e. B A. y e. B x = y ) $.
 
   $( Semantics of a SysML time slice usage (Supplemental-Semantics
-     Chapter/Occurrences.tex, timeslice-usage; SysML 7.9.3): with no temporal
+     Chapter/Occurrences.tex, df-timeslice-usage; SysML 7.9.3): with no temporal
      parts in SFS, a time slice A of an occurrence x is x itself, considered
      over an interval during x.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  timeslice-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isTimeslice A )
+  df-timeslice-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isTimeslice A )
     -> A. x A. y ( <. x , y >. e. B ->
       ( y = x /\ during ( sliceInterval ( A , x ) , x ) ) ) ) $.
 
   $( Semantics of a SysML snapshot usage (Supplemental-Semantics
-     Chapter/Occurrences.tex, snapshot-usage; SysML 7.9.3): a snapshot A of an
+     Chapter/Occurrences.tex, df-snapshot-usage; SysML 7.9.3): a snapshot A of an
      occurrence x is x itself, considered at an instant in its lifetime.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  snapshot-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isSnapshot A )
+  df-snapshot-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isSnapshot A )
     -> A. x A. y ( <. x , y >. e. B ->
       ( y = x /\ shotInstant ( A , x ) e. life ( x ) ) ) ) $.
 
   $( Semantics of a SysML event occurrence usage owned by an occurrence
-     (Supplemental-Semantics Chapter/Occurrences.tex, event-usage; SysML
+     (Supplemental-Semantics Chapter/Occurrences.tex, df-event-usage; SysML
      8.4.5.3): each event y of a featuring occurrence x happens during x, as
      timeEnclosedOccurrences requires.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  event-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isEvent A ) ->
+  df-event-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isEvent A ) ->
     A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $.
 $}
 
@@ -3920,12 +3920,12 @@ wisownedport $a wff isOwnedPort A $.
 ${
   $d x y A $.  $d x y B $.
   $( Semantics of a SysML port usage owned by a part or nested in a port
-     (Supplemental-Semantics Chapter/Ports.tex, port-usage; SysML 8.4.8.2):
+     (Supplemental-Semantics Chapter/Ports.tex, df-port-usage; SysML 8.4.8.2):
      each port y of an owning occurrence x happens during x, as the standard
      library's subsetting of timeEnclosedOccurrences by ownedPorts and
      subports requires.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  port-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isOwnedPort A ) ->
+  df-port-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isOwnedPort A ) ->
     A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $.
 $}
 
@@ -4144,38 +4144,38 @@ df-boundvalue $a |- ( boundValue ( A , C ) <-> isBinding ( A , A , C ) ) $.
 ${
   $d x y z A $.  $d x y z B $.  $d x y z C $.  $d x y z D $.
   $( Semantics of a SysML connection end (Supplemental-Semantics
-     Chapter/Connections.tex, connection-end; SysML 7.13.1): the things a
+     Chapter/Connections.tex, df-connection-end; SysML 7.13.1): the things a
      connection x connects, the values of its end A, are the same at every
      instant of its lifetime.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  connection-end $a |- ( ( <. Feature , A , B >. e. Design /\
+  df-connection-end $a |- ( ( <. Feature , A , B >. e. Design /\
     isConnectionEnd A ) -> A. x e. dom B A. y e. life ( x ) A. z e. life ( x )
       Get ( x , A , y ) = Get ( x , A , z ) ) $.
 
   $( Semantics of a SysML binding (Supplemental-Semantics
-     Chapter/Connections.tex, binding-usage; SysML 7.13.3): a binding A of
+     Chapter/Connections.tex, df-binding-usage; SysML 7.13.3): a binding A of
      features C and D of an occurrence x keeps their values the same at every
      instant of its lifetime.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  binding-usage $a |- ( ( <. Feature , A , B >. e. Design /\
+  df-binding-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isBinding ( A , C , D ) ) -> A. x e. dom B A. y e. life ( x )
       Get ( x , C , y ) = Get ( x , D , y ) ) $.
 
   $( Semantics of a SysML initial feature value (Supplemental-Semantics
-     Chapter/Connections.tex, initial-value; SysML 7.13.4): a feature A with
+     Chapter/Connections.tex, df-initial-value; SysML 7.13.4): a feature A with
      initial value C has the value of C at the start of the lifetime of each
      featuring occurrence x, and may change after.  It is the binding of
      bound-value restricted to birth ( x ), since KerML's
      checkFeatureValueBindingConnector features an initial value's binding by
      that.startShot.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  initial-value $a |- ( ( <. Feature , A , B >. e. Design /\
+  df-initial-value $a |- ( ( <. Feature , A , B >. e. Design /\
     initialValue ( A , C ) ) -> A. x e. dom B
       Get ( x , A , birth ( x ) ) = Get ( x , C , birth ( x ) ) ) $.
   $( Semantics of a SysML bound feature value (Supplemental-Semantics
      Chapter/Connections.tex, bound-value; SysML 7.13.4): a feature A with bound
      value C has the value of C at every instant of the lifetime of each
-     featuring occurrence x.  Derived, not vacuous: binding-usage applied to
+     featuring occurrence x.  Derived, not vacuous: df-binding-usage applied to
      the binding df-boundvalue makes of the feature value. $)
   bound-value $p |- ( ( <. Feature , A , B >. e. Design /\
     boundValue ( A , C ) ) -> A. x e. dom B A. y e. life ( x )
@@ -4185,7 +4185,7 @@ ${
     cv cget wceq vy vx cv clife wral vx cB cdm wral cA cC wboundvalue cA cA
     cC wisbinding cfeature cA cB cotp cDesign wcel cA cC wboundvalue cA cA
     cC wisbinding cA cC df-boundvalue biimpi anim2i vx vy cA cB cA cC
-    binding-usage syl $.
+    df-binding-usage syl $.
 $}
 
 $(
@@ -4224,22 +4224,22 @@ wallocates $a wff allocates ( A , C , D ) $.
 ${
   $d u w x y z A $.  $d u w x y z B $.
   $( Semantics of a SysML VPAllocation (Supplemental-Semantics
-     Chapter/Allocations.tex, vpallocation-usage; SysML 7.15): while an
+     Chapter/Allocations.tex, df-vpallocation-usage; SysML 7.15): while an
      allocation y defined by VPAllocation lasts, its virtual source u is
      allocated, in Tangibility's sense, to its physical target w, so is located
      where w is.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  vpallocation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
+  df-vpallocation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isVPAllocation A ) -> A. x A. y ( <. x , y >. e. B ->
       A. u A. w ( allocates ( y , u , w ) ->
         A. z e. life ( y ) Get ( u , allocatedTo , z ) = { w } ) ) ) $.
 
   $( Semantics of a SysML VVDelegation (Supplemental-Semantics
-     Chapter/Allocations.tex, vvdelegation-usage; SysML 7.15): while an
+     Chapter/Allocations.tex, df-vvdelegation-usage; SysML 7.15): while an
      allocation y defined by VVDelegation lasts, its virtual source u delegates
      its existence to its virtual target w, so is located wherever w is.  An axiom, a semantic law of SysML
      constraining the triples of Design (see df-type). $)
-  vvdelegation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
+  df-vvdelegation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isVVDelegation A ) -> A. x A. y ( <. x , y >. e. B ->
       A. u A. w ( allocates ( y , u , w ) ->
         A. z e. life ( y ) Get ( u , delegatedTo , z ) = { w } ) ) ) $.
