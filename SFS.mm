@@ -3618,31 +3618,21 @@ $( The design: the set of all elements in the database or workspace (KerML
 $c Design $.
 cDesign $a class Design $.
 
-$( Design is left fully opaque above -- nothing else in this file constrains
-   it beyond df-type/df-types below (confirmed: no other statement anywhere
-   in SFS.mm references Design). Defining it directly as the empty set turns
-   both into real theorems instead of independent axioms, with no loss of
-   content, mirroring Lean4SFS's own 2026-08-26 finding for the analogous
-   (much larger) Core.lean cluster: almost every constraint tied to Design
-   collapses once Design is empty, since nothing can ever be a member of it. $)
-df-design $a |- Design = (/) $.
+$( Design is not assumed to be empty.  df-type, df-types, and the SysML laws
+   below are axioms constraining what the triples of a design may be, and so
+   apply to every actual design. $)
 
 $( Semantics of KerML text ` type A `: A is an identifier (a String), and
    ` <. Type , A , C >. e. Design ` is the formal reading of that concrete
    declaration itself -- some design element's df-rep triple has kind Type
-   and id A -- rather than an unstructured stand-in predicate. Given that
-   premise, C (the type's extent, i.e. what A denotes) is a genuine set. Now
-   a real theorem, not an axiom (2026-08-26): with Design = (/) (df-design
-   above), hypothesis df-type.2 is never satisfiable, so the conclusion
-   follows ex falso regardless of C. $)
+   and id A -- rather than an unstructured stand-in predicate.  Given that
+   premise, C (the type's extent, i.e. what A denotes) is a genuine set.  An
+   axiom: not provable from the premise alone, since an ordered triple with a
+   proper-class component is (/) , which Design may contain. $)
 ${
   df-type.1 $e |- A e. ID $.
   df-type.2 $e |- <. Type , A , C >. e. Design $.
-  df-type $p |- C e. _V $=
-    cType cA cC cotp cDesign wcel cC cvv wcel df-type.2 cType cA cC cotp
-    cDesign wcel cC cvv wcel cType cA cC cotp cDesign wcel cType cA cC cotp
-    c0 wcel cType cA cC cotp noel cDesign c0 cType cA cC cotp df-design
-    eleq2i mtbir pm2.21i ax-mp $.
+  df-type $a |- C e. _V $.
 $}
 
 $( V_T: the set of all Types in the design (KerML Core Semantics 2.1.1's vocabulary
@@ -3654,21 +3644,12 @@ cVT $a class VT $.
 
 $( Semantics of KerML text ` type x `, restated as membership in V_T: for every
    identifier x, if x is declared with the bare type keyword (the same
-   Design-triple-membership reading df-type gives that text), then x e. V_T. Uses
-   the same genuine text-to-Design-triple association as df-type, not a separate
-   stand-in predicate. Now a real theorem, not an axiom (2026-08-26), same
-   reasoning as df-type above: with Design = (/) (df-design above), no y can
-   ever satisfy the antecedent, so the whole implication holds vacuously --
-   mirrors Lean4SFS's own finding for the same axiom (that project's
-   Core.lean CoreDesignModel bundle, folded in from SFS.lean's df_types). $)
-df-types $p |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $=
-  cType vx cv vy cv cotp cDesign wcel vy wex vx cv cVT wcel wi vx cv cID wcel
-  cType vx cv vy cv cotp cDesign wcel vy wex vx cv cVT wcel cType vx cv vy cv
-  cotp cDesign wcel wn vy wal cType vx cv vy cv cotp cDesign wcel vy wex wn
-  cType vx cv vy cv cotp cDesign wcel wn vy cType vx cv vy cv cotp cDesign
-  wcel cType vx cv vy cv cotp c0 wcel cType vx cv vy cv cotp noel cDesign c0
-  cType vx cv vy cv cotp df-design eleq2i mtbir ax-gen cType vx cv vy cv cotp
-  cDesign wcel vy alnex mpbi pm2.21i a1i $.
+   Design-triple-membership reading df-type gives that text), then x e. V_T.
+   Uses the same genuine text-to-Design-triple association as df-type, not a
+   separate stand-in predicate.  An axiom: V_T is a primitive this statement
+   constrains rather than defines.  Lean4SFS states the same law as the
+   df_types field of CoreAS.lean's CoreDesignModel. $)
+df-types $a |- ( x e. ID -> ( E. y <. Type , x , y >. e. Design -> x e. VT ) ) $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -3734,41 +3715,22 @@ ${
      of an abstract Definition A, whose extent is B, is an instance of some
      concrete (not abstract) Definition, or a value of some concrete Usage,
      that directly or indirectly specializes A.  A Definition's extent z is a
-     set; a Usage's z is a relation, its values ` ran z `.  A real theorem, not
-     an axiom, for the same reason as df-type: with Design = (/) (df-design),
-     the antecedent is never satisfiable. $)
-  abstract-def $p |- ( ( <. Classifier , A , B >. e. Design /\ isAbstract A ) ->
+     set; a Usage's z is a relation, its values ` ran z `.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  abstract-def $a |- ( ( <. Classifier , A , B >. e. Design /\ isAbstract A ) ->
     A. x e. B ( E. y E. z ( ( <. Classifier , y , z >. e. Design /\
       -. isAbstract y /\ y Specializes A ) /\ x e. z ) \/
     E. y E. z ( ( <. Feature , y , z >. e. Design /\ -. isAbstract y /\
-      y Specializes A ) /\ x e. ran z ) ) ) $=
-    cclassifier cA cB cotp cDesign wcel cclassifier vy cv vz cv cotp cDesign
-    wcel vy cv wisabstract wn vy cv cA wspecializes w3a vx vz wel wa vz wex
-    vy wex cfeature vy cv vz cv cotp cDesign wcel vy cv wisabstract wn vy cv
-    cA wspecializes w3a vx cv vz cv crn wcel wa vz wex vy wex wo vx cB wral
-    cA wisabstract cclassifier cA cB cotp cDesign wcel cclassifier vy cv vz
-    cv cotp cDesign wcel vy cv wisabstract wn vy cv cA wspecializes w3a vx
-    vz wel wa vz wex vy wex cfeature vy cv vz cv cotp cDesign wcel vy cv
-    wisabstract wn vy cv cA wspecializes w3a vx cv vz cv crn wcel wa vz wex
-    vy wex wo vx cB wral cclassifier cA cB cotp cDesign wcel cclassifier cA
-    cB cotp c0 wcel cclassifier cA cB cotp noel cDesign c0 cclassifier cA cB
-    cotp df-design eleq2i mtbir pm2.21i adantr $.
+      y Specializes A ) /\ x e. ran z ) ) ) $.
 
   $( Semantics of an abstract SysML Usage (Supplemental-Semantics
      Chapter/DefinitionAndUsage.tex, abstract-usage; SysML 7.6.3): every value
      pair of an abstract Usage A, whose relation is B, is a value pair of some
-     concrete Usage that directly or indirectly subsets or redefines A.  A real
-     theorem, not an axiom, for the same reason as abstract-def. $)
-  abstract-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isAbstract A ) ->
+     concrete Usage that directly or indirectly subsets or redefines A.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  abstract-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAbstract A ) ->
     A. x e. B E. y E. z ( ( <. Feature , y , z >. e. Design /\
-      -. isAbstract y /\ y Specializes A ) /\ x e. z ) ) $=
-    cfeature cA cB cotp cDesign wcel cfeature vy cv vz cv cotp cDesign wcel
-    vy cv wisabstract wn vy cv cA wspecializes w3a vx vz wel wa vz wex vy
-    wex vx cB wral cA wisabstract cfeature cA cB cotp cDesign wcel cfeature
-    vy cv vz cv cotp cDesign wcel vy cv wisabstract wn vy cv cA wspecializes
-    w3a vx vz wel wa vz wex vy wex vx cB wral cfeature cA cB cotp cDesign
-    wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0
-    cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+      -. isAbstract y /\ y Specializes A ) /\ x e. z ) ) $.
 $}
 
 $( isVariation A: the Definition or Usage A is declared a variation, a
@@ -3789,33 +3751,20 @@ ${
      values of its variants.  A variant y is a Usage, whose relation z has
      values ` ran z `.  SysML 8.4.2.3 requires this restriction of a conformant
      tool, but notes the Systems Model Library does not formally capture it.
-     A real theorem, not an axiom, for the same reason as abstract-def. $)
-  variation-def $p |- ( ( <. Classifier , A , B >. e. Design /\ isVariation A ) ->
+     An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  variation-def $a |- ( ( <. Classifier , A , B >. e. Design /\ isVariation A ) ->
     B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
-      x e. ran z ) } ) $=
-    cclassifier cA cB cotp cDesign wcel cB cfeature vy cv vz cv cotp cDesign
-    wcel vy cv cA wvariantof wa vx cv vz cv crn wcel wa vz wex vy wex vx cab
-    wceq cA wisvariation cclassifier cA cB cotp cDesign wcel cB cfeature vy
-    cv vz cv cotp cDesign wcel vy cv cA wvariantof wa vx cv vz cv crn wcel
-    wa vz wex vy wex vx cab wceq cclassifier cA cB cotp cDesign wcel
-    cclassifier cA cB cotp c0 wcel cclassifier cA cB cotp noel cDesign c0
-    cclassifier cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+      x e. ran z ) } ) $.
 
   $( Semantics of a SysML variation Usage (Supplemental-Semantics
      Chapter/DefinitionAndUsage.tex, variation-usage; SysML 8.4.2.3): the value
      pairs of a variation Usage A, whose relation is B, are exactly the value
-     pairs of its variants.  A real theorem, not an axiom, for the same reason
-     as abstract-def. $)
-  variation-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isVariation A ) ->
+     pairs of its variants.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  variation-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isVariation A ) ->
     B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
-      x e. z ) } ) $=
-    cfeature cA cB cotp cDesign wcel cB cfeature vy cv vz cv cotp cDesign
-    wcel vy cv cA wvariantof wa vx vz wel wa vz wex vy wex vx cab wceq cA
-    wisvariation cfeature cA cB cotp cDesign wcel cB cfeature vy cv vz cv
-    cotp cDesign wcel vy cv cA wvariantof wa vx vz wel wa vz wex vy wex vx
-    cab wceq cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel
-    cfeature cA cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i
-    mtbir pm2.21i adantr $.
+      x e. z ) } ) $.
 $}
 
 $(
@@ -3837,32 +3786,16 @@ wisattribute $a wff isAttribute A $.
 $( Semantics of a SysML attribute definition (Supplemental-Semantics
    Chapter/Attributes.tex, attribute-def; SysML 8.4.3.1): an
    AttributeDefinition A is a DataType, and the extent B of a DataType is a
-   class of data values (df-datatype).  A real theorem, not an axiom, for the
-   same reason as df-type: with Design = (/) (df-design), the antecedent is
-   never satisfiable. $)
-attribute-def $p |- ( <. DataType , A , B >. e. Design -> B C_ DT ) $=
-  cdatatypek cA cB cotp cDesign wcel cB cdatatype wss cdatatypek cA cB cotp
-  cDesign wcel cdatatypek cA cB cotp c0 wcel cdatatypek cA cB cotp noel
-  cDesign c0 cdatatypek cA cB cotp df-design eleq2i mtbir pm2.21i $.
+   class of data values (df-datatype).  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+attribute-def $a |- ( <. DataType , A , B >. e. Design -> B C_ DT ) $.
 
 $( Semantics of a SysML attribute usage (Supplemental-Semantics
    Chapter/Attributes.tex, attribute-usage; SysML 8.4.3.2): the values
-   ` ran B ` of an AttributeUsage A, whose relation is B, are data values.  A
-   real theorem, not an axiom, for the same reason as attribute-def. $)
-attribute-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
-  ran B C_ DT ) $=
-  cfeature cA cB cotp cDesign wcel cB crn cdatatype wss cA wisattribute
-  cfeature cA cB cotp cDesign wcel cB crn cdatatype wss cfeature cA cB cotp
-  cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign
-  c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
-
-$( A Design-membership antecedent implies anything: with Design = (/)
-   (df-design), no triple is a member of it.  Factors out the proof shared by
-   the SysML laws, each of which has such an antecedent. $)
-designant $p |- ( ( <. A , B , C >. e. Design /\ ph ) -> ps ) $=
-  cA cB cC cotp cDesign wcel wps wph cA cB cC cotp cDesign wcel wps cA cB cC
-  cotp cDesign wcel cA cB cC cotp c0 wcel cA cB cC cotp noel cDesign c0 cA cB
-  cC cotp df-design eleq2i mtbir pm2.21i adantr $.
+   ` ran B ` of an AttributeUsage A, whose relation is B, are data values.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+attribute-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isAttribute A ) ->
+  ran B C_ DT ) $.
 
 $(
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -3883,16 +3816,16 @@ ${
      values of its enumerated values y (its variants, as in variation-def);
      each enumerated value has a single fixed value, ` ran z = { x } `; and
      distinct enumerated values have distinct values.  So an enumeration with
-     n enumerated values has exactly n instances.  A real theorem, not an
-     axiom, for the same reason as abstract-def. $)
-  enumeration-def $p |- ( ( <. DataType , A , B >. e. Design /\ isEnumeration A )
+     n enumerated values has exactly n instances.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  enumeration-def $a |- ( ( <. DataType , A , B >. e. Design /\ isEnumeration A )
     -> ( B = { x | E. y E. z ( ( <. Feature , y , z >. e. Design /\
       y VariantOf A ) /\ x e. ran z ) } /\
     A. y A. z ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) ->
       E. x ran z = { x } ) /\
     A. y A. z A. u A. w ( ( ( <. Feature , y , z >. e. Design /\ y VariantOf A ) /\
       ( <. Feature , u , w >. e. Design /\ u VariantOf A ) /\ -. y = u ) ->
-      -. ran z = ran w ) ) ) $= ? $.
+      -. ran z = ran w ) ) ) $.
 $}
 
 $(
@@ -3941,57 +3874,35 @@ ${
      Semantics Chapter/Occurrences.tex, individual-def; SysML 7.9.4, 8.4.5.1):
      with no temporal portions in SFS, the extent B of an individual
      definition A has at most one occurrence, the individual, and none in a
-     counterfactual model.  A real theorem, not an axiom, for the same reason
-     as abstract-def. $)
-  individual-def $p |- ( ( <. Class , A , B >. e. Design /\ isIndividual A ) ->
-    A. x e. B A. y e. B x = y ) $=
-    cclassk cA cB cotp cDesign wcel vx vy weq vy cB wral vx cB wral cA
-    wisindividual cclassk cA cB cotp cDesign wcel vx vy weq vy cB wral vx cB
-    wral cclassk cA cB cotp cDesign wcel cclassk cA cB cotp c0 wcel cclassk
-    cA cB cotp noel cDesign c0 cclassk cA cB cotp df-design eleq2i mtbir
-    pm2.21i adantr $.
+     counterfactual model.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  individual-def $a |- ( ( <. Class , A , B >. e. Design /\ isIndividual A ) ->
+    A. x e. B A. y e. B x = y ) $.
 
   $( Semantics of a SysML time slice usage (Supplemental-Semantics
      Chapter/Occurrences.tex, timeslice-usage; SysML 7.9.3): with no temporal
      parts in SFS, a time slice A of an occurrence x is x itself, considered
-     over an interval during x.  A real theorem, not an axiom, for the same
-     reason as abstract-def. $)
-  timeslice-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isTimeslice A )
+     over an interval during x.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  timeslice-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isTimeslice A )
     -> A. x A. y ( <. x , y >. e. B ->
-      ( y = x /\ during ( sliceInterval ( A , x ) , x ) ) ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
-    cv csliceint vx cv wduring wa wi vy wal vx wal cA wistimeslice cfeature
-    cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx cv
-    csliceint vx cv wduring wa wi vy wal vx wal cfeature cA cB cotp cDesign
-    wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0
-    cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+      ( y = x /\ during ( sliceInterval ( A , x ) , x ) ) ) ) $.
 
   $( Semantics of a SysML snapshot usage (Supplemental-Semantics
      Chapter/Occurrences.tex, snapshot-usage; SysML 7.9.3): a snapshot A of an
-     occurrence x is x itself, considered at an instant in its lifetime.  A
-     real theorem, not an axiom, for the same reason as abstract-def. $)
-  snapshot-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isSnapshot A )
+     occurrence x is x itself, considered at an instant in its lifetime.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  snapshot-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isSnapshot A )
     -> A. x A. y ( <. x , y >. e. B ->
-      ( y = x /\ shotInstant ( A , x ) e. life ( x ) ) ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
-    cv cshotinst vx cv clife wcel wa wi vy wal vx wal cA wissnapshot
-    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy vx weq cA vx
-    cv cshotinst vx cv clife wcel wa wi vy wal vx wal cfeature cA cB cotp
-    cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel
-    cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+      ( y = x /\ shotInstant ( A , x ) e. life ( x ) ) ) ) $.
 
   $( Semantics of a SysML event occurrence usage owned by an occurrence
      (Supplemental-Semantics Chapter/Occurrences.tex, event-usage; SysML
      8.4.5.3): each event y of a featuring occurrence x happens during x, as
-     timeEnclosedOccurrences requires.  A real theorem, not an axiom, for the
-     same reason as abstract-def. $)
-  event-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isEvent A ) ->
-    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy cv vx cv
-    wduring wi vy wal vx wal cA wisevent cfeature cA cB cotp cDesign wcel vx
-    cv vy cv cop cB wcel vy cv vx cv wduring wi vy wal vx wal cfeature cA cB
-    cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA cB cotp noel
-    cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir pm2.21i adantr $.
+     timeEnclosedOccurrences requires.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  event-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isEvent A ) ->
+    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $.
 $}
 
 $(
@@ -4012,16 +3923,10 @@ ${
      (Supplemental-Semantics Chapter/Ports.tex, port-usage; SysML 8.4.8.2):
      each port y of an owning occurrence x happens during x, as the standard
      library's subsetting of timeEnclosedOccurrences by ownedPorts and
-     subports requires.  A real theorem, not an axiom, for the same reason as
-     abstract-def. $)
-  port-usage $p |- ( ( <. Feature , A , B >. e. Design /\ isOwnedPort A ) ->
-    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv vy cv cop cB wcel vy cv vx cv
-    wduring wi vy wal vx wal cA wisownedport cfeature cA cB cotp cDesign
-    wcel vx cv vy cv cop cB wcel vy cv vx cv wduring wi vy wal vx wal
-    cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA
-    cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir
-    pm2.21i adantr $.
+     subports requires.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  port-usage $a |- ( ( <. Feature , A , B >. e. Design /\ isOwnedPort A ) ->
+    A. x A. y ( <. x , y >. e. B -> during ( y , x ) ) ) $.
 $}
 
 $(
@@ -4241,33 +4146,20 @@ ${
   $( Semantics of a SysML connection end (Supplemental-Semantics
      Chapter/Connections.tex, connection-end; SysML 7.13.1): the things a
      connection x connects, the values of its end A, are the same at every
-     instant of its lifetime.  A real theorem, not an axiom, for the same
-     reason as abstract-def. $)
-  connection-end $p |- ( ( <. Feature , A , B >. e. Design /\
+     instant of its lifetime.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  connection-end $a |- ( ( <. Feature , A , B >. e. Design /\
     isConnectionEnd A ) -> A. x e. dom B A. y e. life ( x ) A. z e. life ( x )
-      Get ( x , A , y ) = Get ( x , A , z ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv cA vy cv cget vx cv cA vz cv cget
-    wceq vz vx cv clife wral vy vx cv clife wral vx cB cdm wral cA
-    wisconnend cfeature cA cB cotp cDesign wcel vx cv cA vy cv cget vx cv cA
-    vz cv cget wceq vz vx cv clife wral vy vx cv clife wral vx cB cdm wral
-    cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0 wcel cfeature cA
-    cB cotp noel cDesign c0 cfeature cA cB cotp df-design eleq2i mtbir
-    pm2.21i adantr $.
+      Get ( x , A , y ) = Get ( x , A , z ) ) $.
 
   $( Semantics of a SysML binding (Supplemental-Semantics
      Chapter/Connections.tex, binding-usage; SysML 7.13.3): a binding A of
      features C and D of an occurrence x keeps their values the same at every
-     instant of its lifetime.  A real theorem, not an axiom, for the same
-     reason as abstract-def. $)
-  binding-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+     instant of its lifetime.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  binding-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isBinding ( A , C , D ) ) -> A. x e. dom B A. y e. life ( x )
-      Get ( x , C , y ) = Get ( x , D , y ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv cC vy cv cget vx cv cD vy cv cget
-    wceq vy vx cv clife wral vx cB cdm wral cA cC cD wisbinding cfeature cA
-    cB cotp cDesign wcel vx cv cC vy cv cget vx cv cD vy cv cget wceq vy vx
-    cv clife wral vx cB cdm wral cfeature cA cB cotp cDesign wcel cfeature
-    cA cB cotp c0 wcel cfeature cA cB cotp noel cDesign c0 cfeature cA cB
-    cotp df-design eleq2i mtbir pm2.21i adantr $.
+      Get ( x , C , y ) = Get ( x , D , y ) ) $.
 
   $( Semantics of a SysML initial feature value (Supplemental-Semantics
      Chapter/Connections.tex, initial-value; SysML 7.13.4): a feature A with
@@ -4275,17 +4167,11 @@ ${
      featuring occurrence x, and may change after.  It is the binding of
      bound-value restricted to birth ( x ), since KerML's
      checkFeatureValueBindingConnector features an initial value's binding by
-     that.startShot.  A real theorem, not an axiom, for the same reason as
-     abstract-def. $)
-  initial-value $p |- ( ( <. Feature , A , B >. e. Design /\
+     that.startShot.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  initial-value $a |- ( ( <. Feature , A , B >. e. Design /\
     initialValue ( A , C ) ) -> A. x e. dom B
-      Get ( x , A , birth ( x ) ) = Get ( x , C , birth ( x ) ) ) $=
-    cfeature cA cB cotp cDesign wcel vx cv cA vx cv cbirth cget vx cv cC vx
-    cv cbirth cget wceq vx cB cdm wral cA cC winitval cfeature cA cB cotp
-    cDesign wcel vx cv cA vx cv cbirth cget vx cv cC vx cv cbirth cget wceq
-    vx cB cdm wral cfeature cA cB cotp cDesign wcel cfeature cA cB cotp c0
-    wcel cfeature cA cB cotp noel cDesign c0 cfeature cA cB cotp df-design
-    eleq2i mtbir pm2.21i adantr $.
+      Get ( x , A , birth ( x ) ) = Get ( x , C , birth ( x ) ) ) $.
   $( Semantics of a SysML bound feature value (Supplemental-Semantics
      Chapter/Connections.tex, bound-value; SysML 7.13.4): a feature A with bound
      value C has the value of C at every instant of the lifetime of each
@@ -4341,28 +4227,22 @@ ${
      Chapter/Allocations.tex, vpallocation-usage; SysML 7.15): while an
      allocation y defined by VPAllocation lasts, its virtual source u is
      allocated, in Tangibility's sense, to its physical target w, so is located
-     where w is.  A real theorem, not an axiom, for the same reason as
-     abstract-def. $)
-  vpallocation-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+     where w is.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  vpallocation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isVPAllocation A ) -> A. x A. y ( <. x , y >. e. B ->
       A. u A. w ( allocates ( y , u , w ) ->
-        A. z e. life ( y ) Get ( u , allocatedTo , z ) = { w } ) ) ) $=
-    cA wisvpalloc vx cv vy cv cop cB wcel vy cv vu cv vw cv wallocates vu cv
-    callocatedto vz cv cget vw cv csn wceq vz vy cv clife wral wi vw wal vu
-    wal wi vy wal vx wal cfeature cA cB designant $.
+        A. z e. life ( y ) Get ( u , allocatedTo , z ) = { w } ) ) ) $.
 
   $( Semantics of a SysML VVDelegation (Supplemental-Semantics
      Chapter/Allocations.tex, vvdelegation-usage; SysML 7.15): while an
      allocation y defined by VVDelegation lasts, its virtual source u delegates
-     its existence to its virtual target w, so is located wherever w is.  A
-     real theorem, not an axiom, for the same reason as abstract-def. $)
-  vvdelegation-usage $p |- ( ( <. Feature , A , B >. e. Design /\
+     its existence to its virtual target w, so is located wherever w is.  An axiom, a semantic law of SysML
+     constraining the triples of Design (see df-type). $)
+  vvdelegation-usage $a |- ( ( <. Feature , A , B >. e. Design /\
     isVVDelegation A ) -> A. x A. y ( <. x , y >. e. B ->
       A. u A. w ( allocates ( y , u , w ) ->
-        A. z e. life ( y ) Get ( u , delegatedTo , z ) = { w } ) ) ) $=
-    cA wisvvdeleg vx cv vy cv cop cB wcel vy cv vu cv vw cv wallocates vu cv
-    cdelegatedto vz cv cget vw cv csn wceq vz vy cv clife wral wi vw wal vu
-    wal wi vy wal vx wal cfeature cA cB designant $.
+        A. z e. life ( y ) Get ( u , delegatedTo , z ) = { w } ) ) ) $.
 $}
 
 $( ******************* End of Supplemental Formal Semantics ******************* $)
